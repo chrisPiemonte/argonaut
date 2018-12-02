@@ -4,8 +4,9 @@ __pycache__/
 *$py.class
 
 .ipynb_checkpoints
-*.pyc 
+*.pyc
 .DS_Store
+res/credentials.yml
 
 # C extensions
 *.so
