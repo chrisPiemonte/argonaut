@@ -1,4 +1,4 @@
-# Debate2arg
+# Debate2Arg
 
 ### Setup
 I suggest to setup a virtual environment using [miniconda](http://conda.pydata.org/miniconda.html)
