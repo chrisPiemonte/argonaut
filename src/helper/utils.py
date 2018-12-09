@@ -1,9 +1,9 @@
-import networkx as nx
+# import networkx as nx
 import numpy as np
 import tweepy, gensim, nltk, yaml, os, sys
-from nltk.corpus import stopwords
-from nltk.classify import SklearnClassifier
-import matplotlib.pyplot as plt
+# from nltk.corpus import stopwords
+# from nltk.classify import SklearnClassifier
+# import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 class TwitterAccess:
@@ -35,6 +35,13 @@ class Tweet:
     @staticmethod
     def get_sentiment(text):
         return Tweet.sia.polarity_scores(text)['compound']
+
+    def get_similarity(self, other):
+        # text_source_avg_vector = avg_sentence_vector(conv[i].text.split(),   model=model)
+        # text_dest_avg_vector   = avg_sentence_vector(conv[i+1].text.split(), model=model)
+        # # similarity = cosine_similarity(text_source_avg_vector, text_dest_avg_vector)
+        # similarity = distance.euclidean(text_source_avg_vector.reshape(-1, 1), text_dest_avg_vector.reshape(-1, 1)) * 100
+        return 1.0
 
 
 def extend(api, conversation):
@@ -81,37 +88,47 @@ cosine_similarity = lambda s1, s2: round(np.dot(s1, s2) / (np.linalg.norm(s1) * 
 
 #############################################################################
 
+'''
 
-def has_common(l1, l2):
+def has_common_user(conv1, conv2):
     common = False
-    for i in l1:
-        for j in l2:
-            if i.user == j.user:
+    for tweet in conv1:
+        for other_tweet in conv2:
+            if tweet.user == other_tweet.user:
+                common = True
+    return common
+
+def has_common_tweet(conv1, conv2):
+    common = False
+    for tweet in conv1:
+        for other_tweet in conv2:
+            if tweet.my_id == other_tweet.my_id:
                 common = True
     return common
 
 def pop_by_index(index, lista):
     retlist = None, []
-    if index < len(lista)-1:
+    if index < len(lista) - 1:
         retlist = lista[index], lista[:index] + lista[index+1:]
     elif index == len(lista)-1:
         retlist = lista[index], lista[:-1]
     return retlist
 
-def join_elem(elem, lista):
-    new_lista = lista.copy()
-    for i, l in enumerate(new_lista):
-        if has_common(elem, l):
-            new_lista[i] = l + elem
+def join_conv(index, conversations, has_common):
+    new_conversations = conversations.copy()
+    current_conv, rest = pop_by_index(index, new_conversations)
+    for i, conv in enumerate(rest):
+        if has_common(current_conv, conv):
+            rest[i] = conv + current_conv
+            new_conversations = rest
             break
-    return new_lista
+    return new_conversations
 
-def unify(lista):
-    new_list = lista.copy()
-    inter = False
-    for i, l in enumerate(new_list):
-        curr, rest = pop_by_index(i, new_list)
-        if any([has_common(curr, r) for r in rest]):
-            new_list = join_elem(curr, rest)
-            inter = True
-    return new_list 
+def unify(conversations, has_common=has_common_user):
+    new_conversations = conversations.copy()
+    for i, _ in enumerate(new_conversations):
+        new_conversations = join_conv(i, new_conversations, has_common)
+    return new_conversations
+
+
+'''
