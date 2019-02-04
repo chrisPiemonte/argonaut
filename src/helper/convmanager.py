@@ -15,7 +15,7 @@ def has_common_tweet(conv1, conv2):
     common = False
     for tweet in conv1:
         for other_tweet in conv2:
-            if tweet.my_id == other_tweet.my_id:
+            if tweet.id == other_tweet.id:
                 common = True
     return common
 

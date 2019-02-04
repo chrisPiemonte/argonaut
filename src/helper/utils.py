@@ -9,20 +9,21 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 class Credentials:
     def __init__(self, credential_file):
         self.cred = yaml.load(open(credential_file))
-        self.reddit = self.cred['reddit']
+        self.reddit  = self.cred['reddit']
+        self.twitter = self.cred['twitter']
 
-class TwitterAccess:
-    def __init__(self, credential_file):
-        self.cred = yaml.load(open(credential_file))
-        self.auth = tweepy.OAuthHandler(
-            self.cred['twitter']['CONSUMER_KEY'],
-            self.cred['twitter']['CONSUMER_SECRET']
-        )
-        self.auth.set_access_token(
-            self.cred['twitter']['ACCESS_TOKEN'],
-            self.cred['twitter']['ACCESS_TOKEN_SECRET']
-        )
-        self.api  = tweepy.API(self.auth)
+# class TwitterAccess:
+#     def __init__(self, credential_file):
+#         self.cred = yaml.load(open(credential_file))
+#         self.auth = tweepy.OAuthHandler(
+#             self.cred['twitter']['CONSUMER_KEY'],
+#             self.cred['twitter']['CONSUMER_SECRET']
+#         )
+#         self.auth.set_access_token(
+#             self.cred['twitter']['ACCESS_TOKEN'],
+#             self.cred['twitter']['ACCESS_TOKEN_SECRET']
+#         )
+#         self.api  = tweepy.API(self.auth)
 
 class Tweet:
     sia = SentimentIntensityAnalyzer()
@@ -49,26 +50,49 @@ class Tweet:
         return 1.0
 
 
+# def extendOLD(api, conversation):
+#     last_tweet = conversation[-1]
+#     conversation_extended = conversation
+#     if last_tweet.reply_to is not None:
+#         try:
+#             responded_status = api.get_status(last_tweet.reply_to, tweet_mode='extended')
+#             responded_tweet  = convert(responded_status)
+#             conversation_extended = extend(api, conversation_extended + [responded_tweet])
+#         except:
+#             conversation[-1].reply_to = None
+#     return conversation_extended
+# 
+# def convertOLD(status):
+#     return Tweet(
+#         status._json['id'],
+#         status._json['in_reply_to_status_id'],
+#         text=status._json['full_text'],
+#         user=status._json['user']['id']
+#     )
+
+# tweet
 def extend(api, conversation):
     last_tweet = conversation[-1]
     conversation_extended = conversation
-    if last_tweet.reply_to is not None:
+    if last_tweet.parent is not None:
         try:
-            responded_status = api.get_status(last_tweet.reply_to, tweet_mode='extended')
+            responded_status = api.get_status(last_tweet.parent, tweet_mode='extended')
             responded_tweet  = convert(responded_status)
             conversation_extended = extend(api, conversation_extended + [responded_tweet])
         except:
-            conversation[-1].reply_to = None
+            conversation[-1].parent = None
     return conversation_extended
 
 def convert(status):
-    return Tweet(
+    return Comment(
         status._json['id'],
         status._json['in_reply_to_status_id'],
+        status._json['in_reply_to_user_id'],
         text=status._json['full_text'],
         user=status._json['user']['id']
     )
 
+# tweet
 def is_response(status):
     return status._json['in_reply_to_user_id'] is not None
 
