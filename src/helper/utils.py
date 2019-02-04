@@ -6,6 +6,11 @@ import tweepy, gensim, nltk, yaml, os, sys
 # import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
+class Credentials:
+    def __init__(self, credential_file):
+        self.cred = yaml.load(open(credential_file))
+        self.reddit = self.cred['reddit']
+
 class TwitterAccess:
     def __init__(self, credential_file):
         self.cred = yaml.load(open(credential_file))
@@ -82,3 +87,67 @@ def avg_sentence_vector(sentence, model, num_features=300):
     return featureVec
 
 cosine_similarity = lambda s1, s2: round(np.dot(s1, s2) / (np.linalg.norm(s1) * np.linalg.norm(s2)), 4)
+
+
+class Comment:
+    sia = SentimentIntensityAnalyzer()
+
+    def __init__(self, id, parent, parent_user, text='', user=''):
+        self.id    = id
+        self.text  = text
+        self.user  = user
+        self.parent       = parent
+        self.parent_user  = parent_user
+        self.sentiment    = Tweet.get_sentiment(text)
+
+    def __repr__(self):
+        return 'Comment({}, {}, {})'.format(self.id, self.parent, self.user)
+
+    @staticmethod
+    def get_sentiment(text):
+        return Tweet.sia.polarity_scores(text)['compound']
+
+    def get_similarity(self, other):
+        # text_source_avg_vector = avg_sentence_vector(conv[i].text.split(),   model=model)
+        # text_dest_avg_vector   = avg_sentence_vector(conv[i+1].text.split(), model=model)
+        # # similarity = cosine_similarity(text_source_avg_vector, text_dest_avg_vector)
+        # similarity = distance.euclidean(text_source_avg_vector.reshape(-1, 1), text_dest_avg_vector.reshape(-1, 1)) * 100
+        return 1.0
+    
+    
+    
+########################################################################################
+#### REDDIT #### REDDIT #### REDDIT #### REDDIT #### REDDIT #### REDDIT #### REDDIT ####
+########################################################################################
+    
+def getSubComments(comment, allComments, verbose=True):
+    allComments.append(comment)
+    if not hasattr(comment, "replies"):
+        replies = comment.comments()
+        if verbose: print("fetching (" + str(len(allComments)) + " comments fetched total)")
+    else:
+        replies = comment.replies
+    for child in replies:
+        getSubComments(child, allComments, verbose=verbose)
+
+def getAll(r, submissionId, verbose=True):
+    submission = r.submission(submissionId)
+    submission.comments.replace_more(limit=None)
+    comments = submission.comments
+    commentsList = []
+    for comment in comments:
+        getSubComments(comment, commentsList, verbose=verbose)
+    return commentsList
+
+def to_comments(commentsList):
+    return [Comment(comment.id, comment.parent().id, get_author(comment.parent()), text=comment.body, user=get_author(comment)) 
+            for comment 
+            in commentsList]
+
+def get_author(comment):
+    author = None
+    try:
+        author = comment.author.name
+    except:
+        pass
+    return author
