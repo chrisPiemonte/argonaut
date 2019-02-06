@@ -6,9 +6,11 @@ import tweepy, gensim, nltk, yaml, os, sys
 # import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-from .utils import *
+from .common_utils import *
 
-    
+USER_AGENT = 'linux:com.example.argumentation:v0.0.1 (by /u/anzianotti)'
+
+
 def getSubComments(comment, allComments, verbose=True):
     allComments.append(comment)
     if not hasattr(comment, "replies"):
@@ -29,8 +31,14 @@ def getAll(r, submissionId, verbose=True):
     return commentsList
 
 def to_comments(commentsList):
-    return [Comment(comment.id, comment.parent().id, get_author(comment.parent()), text=comment.body, user=get_author(comment)) 
-            for comment 
+    return [Comment(
+                comment.id,
+                comment.parent().id,
+                get_author(comment.parent()),
+                text=get_text(comment),
+                parent_text=get_text(comment.parent()),
+                user=get_author(comment))
+            for comment
             in commentsList]
 
 def get_author(comment):
@@ -40,3 +48,11 @@ def get_author(comment):
     except:
         pass
     return author
+
+def get_text(comment):
+    text = None
+    try:
+        text = comment.body
+    except:
+        text = comment.selftext
+    return text
