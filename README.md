@@ -1,4 +1,4 @@
-# Debate2Arg
+# <img src="https://raw.githubusercontent.com/chrisPiemonte/debate2arg/master/res/img/argonaut.png" width="50"/> Argonaut
 
 ### Setup
 I suggest to setup a virtual environment using [miniconda](http://conda.pydata.org/miniconda.html)
