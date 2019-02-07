@@ -13,7 +13,7 @@ reddit = praw.Reddit(
     user_agent=reddit_utils.USER_AGENT
 )
 
-def get_debate_graph(submissionId=None, mode='comments', save=True, path=None):
+def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, multiedges=False):
     comments = get_comments(submissionId)
     Graph = None
     if mode == 'comments':
@@ -22,6 +22,9 @@ def get_debate_graph(submissionId=None, mode='comments', save=True, path=None):
         Graph = __build_graph_from_users(comments)
     else:
         raise Exception()
+    remove_nones(Graph)
+    if not multiedges:
+        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'reddit_{mode}'
         output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
@@ -38,7 +41,7 @@ def get_comments(submissionId):
     return comments
 
 def __build_graph_from_comments(comments):
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     for i, comment in enumerate(comments):
         if comment.parent is not None:
             comment_sentiment = TextAnalyzer.get_sentiment(comment.text)
@@ -51,7 +54,7 @@ def __build_graph_from_comments(comments):
     return Graph
 
 def __build_graph_from_users(comments):
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     for i, comment in enumerate(comments):
         if comment.parent is not None:
             comment_sentiment = TextAnalyzer.get_sentiment(comment.text)

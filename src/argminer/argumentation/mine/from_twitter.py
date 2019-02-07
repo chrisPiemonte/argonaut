@@ -19,7 +19,7 @@ auth.set_access_token(
 api = tweepy.API(auth)
 
 
-def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None):
+def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None, multiedges=False):
     # It is a list of one conversation actually
     conversations = __build_conversations(query=query, language=language)
     Graph = None
@@ -29,6 +29,9 @@ def get_debate_graph(query='trump', language='en', mode='comments', save=True, p
         Graph = __build_graph_from_users(conversations)
     else:
         raise Exception()
+    remove_nones(Graph)
+    if not multiedges:
+        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'twitter_{mode}'
         output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
@@ -54,7 +57,7 @@ def __build_conversations(query='trump', language='en'):
 
 def __build_graph_from_comments(conversations):
     conversations = [max(conversations, key=len)]
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     for conv in conversations:
         for i, tweet in enumerate(conv):
             if tweet.parent is not None:
@@ -71,7 +74,7 @@ def __build_graph_from_comments(conversations):
 
 def __build_graph_from_users(conversations):
     conversations = [max(conversations, key=get_num_users)]
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     for conv in conversations:
         for i, tweet in enumerate(conv):
             if tweet.parent is not None:

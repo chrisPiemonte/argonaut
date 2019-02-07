@@ -9,7 +9,7 @@ import argminer.text.TextAnalyzer as TextAnalyzer
 
 site = StackAPI('stackoverflow')
 
-def get_debate_graph(question=None, mode='comments', save=True, path=None):
+def get_debate_graph(question=None, mode='comments', save=True, path=None, multiedges=False):
     questions_request = stack_utils.QUESTION_URL % question if question is not None else stack_utils.QUESTIONS_URL
     questions = get_questions(questions=questions_request, site=site)
     Graph = None
@@ -19,6 +19,9 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None):
         Graph = __build_graph_from_users(questions)
     else:
         raise Exception()
+    remove_nones(Graph)
+    if not multiedges:
+        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'stack_{mode}'
         output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
@@ -26,7 +29,7 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None):
     return Graph
 
 def __build_graph_from_comments(questions):
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     if len(questions['items']) > 1:
         n = randint(0, len(questions['items'])-1)
         questions = questions['items'][n:n+1]
@@ -57,7 +60,7 @@ def __build_graph_from_comments(questions):
     return Graph
 
 def __build_graph_from_users(questions):
-    Graph = nx.DiGraph()
+    Graph = nx.MultiDiGraph()
     if len(questions['items']) > 1:
         n = randint(0, len(questions['items'])-1)
         questions = questions['items'][n:n+1]
