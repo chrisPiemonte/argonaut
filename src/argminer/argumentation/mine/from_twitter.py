@@ -5,6 +5,7 @@ from argminer.utils.twitter_utils import *
 import argminer.utils.common_utils as utils
 from argminer.argumentation.mine.common import *
 import argminer.text.TextAnalyzer as TextAnalyzer
+from argminer.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
 TWEET_MODE = 'extended'
@@ -19,7 +20,7 @@ auth.set_access_token(
 api = tweepy.API(auth)
 
 
-def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None, multiedges=False):
+def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
     # It is a list of one conversation actually
     conversations = __build_conversations(query=query, language=language)
     Graph = None
@@ -34,8 +35,16 @@ def get_debate_graph(query='trump', language='en', mode='comments', save=True, p
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'twitter_{mode}'
-        output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
-        utils.pickle_graph(Graph, output_path)
+        # save pickle
+        # graph_name  = utils.get_graph_name(suffix=suffix)
+        # graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path
+        # utils.pickle_graph(Graph, graph_output_path)
+        # save prolog facts
+        # facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal)
+        # facts_name = utils.get_facts_name(graph_name=graph_name)
+        # facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path
+        # utils.save_facts(facts, facts_output_path)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
     return Graph
 
 @lru_cache(maxsize=None)

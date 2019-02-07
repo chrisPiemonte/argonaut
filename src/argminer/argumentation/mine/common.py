@@ -1,8 +1,10 @@
 import networkx as nx
+from pathlib import Path
 import matplotlib.pyplot as plt
+import argminer.text.TextAnalyzer
 import argminer.utils.common_utils as utils
 from argminer.utils.twitter_utils import *
-import argminer.text.TextAnalyzer
+from argminer.argumentation.convert import to_prolog
 
 
 def get_edge_weight(similarity, sentiment, other_sentiment):
@@ -46,3 +48,14 @@ def merge_multiedges(MultiDiGraph):
         if 'num' in data:
             Graph[u][v]['weight'] /= Graph[u][v]['num']
     return Graph
+
+def save_graph(Graph, suffix, path=None, framework='bwaf', n_decimal=2):
+    graph_name = utils.get_graph_name(suffix=suffix)
+    graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path + '_graph.pickle'
+    utils.pickle_graph(Graph, graph_output_path)
+    # save prolog facts
+    facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal)
+    facts_name = utils.get_facts_name(graph_name=graph_name, framework=framework)
+    facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path + '_facts.pl'
+    utils.save_facts(facts, facts_output_path)
+    print('Everything saved successfully.')

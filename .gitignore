@@ -9,6 +9,7 @@ __pycache__/
 res/credentials.yml
 models/pretrained/
 data/interim/
+data/prolog/
 
 # C extensions
 *.so

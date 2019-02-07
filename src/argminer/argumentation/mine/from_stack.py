@@ -6,10 +6,11 @@ import argminer.utils.common_utils as utils
 from argminer.argumentation.mine.common import *
 import argminer.utils.stack_utils as stack_utils
 import argminer.text.TextAnalyzer as TextAnalyzer
+from argminer.argumentation.convert import to_prolog
 
 site = StackAPI('stackoverflow')
 
-def get_debate_graph(question=None, mode='comments', save=True, path=None, multiedges=False):
+def get_debate_graph(question=None, mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
     questions_request = stack_utils.QUESTION_URL % question if question is not None else stack_utils.QUESTIONS_URL
     questions = get_questions(questions=questions_request, site=site)
     Graph = None
@@ -24,8 +25,7 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None, multi
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'stack_{mode}'
-        output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
-        utils.pickle_graph(Graph, output_path)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
     return Graph
 
 def __build_graph_from_comments(questions):

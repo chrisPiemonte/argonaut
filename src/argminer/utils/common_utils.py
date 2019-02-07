@@ -10,6 +10,7 @@ DATA_PATH   = Path(ROOT_PATH, 'data')
 MODELS_PATH = Path(ROOT_PATH, 'models')
 PRETRAINED_MODELS_PATH = Path(MODELS_PATH, 'pretrained')
 INTERIM_DATA_PATH = Path(DATA_PATH, 'interim')
+PROLOG_DATA_PATH  = Path(DATA_PATH, 'prolog')
 
 CREDENTIALS_PATH = Path(RES_PATH, 'credentials.yml')
 W2V_GOOGLENEWS_MODEL_PATH = Path(PRETRAINED_MODELS_PATH, 'GoogleNews-vectors-negative300.bin.gz')
@@ -55,7 +56,7 @@ def pickle_graph(Graph, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'wb') as file:
         pickle.dump(Graph, file)
-    print(f'Graph pickled successfully at {path}.')
+    print(f'Graph pickled successfully at: {path}.')
 
 def load_pickled_graph(path):
     with open(str(path), 'rb') as file:
@@ -68,3 +69,17 @@ def get_graph_name(suffix=''):
 
 def __get_time(format='%y%m%d-%H%M%S'):
     return datetime.datetime.now().strftime(format)
+
+def save_facts(facts, path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(str(path), 'w') as file:
+        for fact in sorted(facts):
+            file.write(str(fact) + '\n')
+    print(f'Prolog facts saved successfully at: {path}.')
+
+def get_facts_name(suffix='', graph_name=None, framework=''):
+    facts_name = f'{__get_time()}_{suffix}_{framework}_facts.pl'
+    if graph_name is not None:
+        graph_path = Path(graph_name)
+        facts_name = graph_path.name.replace('graph.pickle', f'{framework}_facts.pl')
+    return facts_name

@@ -5,6 +5,7 @@ import argminer.utils.common_utils as utils
 from argminer.argumentation.mine.common import *
 import argminer.text.TextAnalyzer as TextAnalyzer
 import argminer.utils.reddit_utils as reddit_utils
+from argminer.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
 reddit = praw.Reddit(
@@ -13,7 +14,7 @@ reddit = praw.Reddit(
     user_agent=reddit_utils.USER_AGENT
 )
 
-def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, multiedges=False):
+def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
     comments = get_comments(submissionId)
     Graph = None
     if mode == 'comments':
@@ -27,8 +28,7 @@ def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, m
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'reddit_{mode}'
-        output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
-        utils.pickle_graph(Graph, output_path)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
     return Graph
 
 def get_comments(submissionId):
