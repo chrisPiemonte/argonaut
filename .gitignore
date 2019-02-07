@@ -8,6 +8,7 @@ __pycache__/
 .DS_Store
 res/credentials.yml
 models/pretrained/
+data/interim/
 
 # C extensions
 *.so

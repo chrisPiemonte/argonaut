@@ -1,7 +1,7 @@
 import numpy as np
 from pathlib import Path
-import tweepy, gensim, nltk, yaml, os, sys
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import tweepy, gensim, nltk, yaml, os, sys, pickle, datetime
 
 # PATHS
 ROOT_PATH   = Path(Path(__file__).parent.parent.parent.parent)
@@ -9,12 +9,13 @@ RES_PATH    = Path(ROOT_PATH, 'res')
 DATA_PATH   = Path(ROOT_PATH, 'data')
 MODELS_PATH = Path(ROOT_PATH, 'models')
 PRETRAINED_MODELS_PATH = Path(MODELS_PATH, 'pretrained')
+INTERIM_DATA_PATH = Path(DATA_PATH, 'interim')
 
 CREDENTIALS_PATH = Path(RES_PATH, 'credentials.yml')
-W2V_GOOGLENEWS_MODEL_PATH  = Path(PRETRAINED_MODELS_PATH, 'GoogleNews-vectors-negative300.bin.gz')
+W2V_GOOGLENEWS_MODEL_PATH = Path(PRETRAINED_MODELS_PATH, 'GoogleNews-vectors-negative300.bin.gz')
 
 # URLS
-W2V_GOOGLENEWS__MODEL_URL = 'https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz'
+W2V_GOOGLENEWS_MODEL_URL = 'https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz'
 
 class Credentials:
     def __init__(self, credential_file):
@@ -24,7 +25,6 @@ class Credentials:
 
 
 class Comment:
-    sia = SentimentIntensityAnalyzer()
 
     def __init__(self, id, parent, parent_user, text='', parent_text='', user=''):
         self.id    = id
@@ -33,21 +33,9 @@ class Comment:
         self.parent      = parent
         self.parent_user = parent_user
         self.parent_text = parent_text
-        self.sentiment   = Comment.get_sentiment(text)
 
     def __repr__(self):
-        return 'Comment({}, {}, {})'.format(self.id, self.parent, self.user)
-
-    @staticmethod
-    def get_sentiment(text):
-        return Comment.sia.polarity_scores(text)['compound']
-
-    def get_similarity(self, other):
-        # text_source_avg_vector = avg_sentence_vector(conv[i].text.split(),   model=model)
-        # text_dest_avg_vector   = avg_sentence_vector(conv[i+1].text.split(), model=model)
-        # # similarity = cosine_similarity(text_source_avg_vector, text_dest_avg_vector)
-        # similarity = distance.euclidean(text_source_avg_vector.reshape(-1, 1), text_dest_avg_vector.reshape(-1, 1)) * 100
-        return 1.0
+        return 'Comment({}, {}, {})'.format(self.id, self.user, self.parent)
 
 
 # callback for showing progress in url download
@@ -62,3 +50,21 @@ def __reporthook(blocknum, blocksize, totalsize):
             sys.stderr.write("\n")
     else: # total size is unknown
         sys.stderr.write("read %d\n" % (readsofar,))
+
+def pickle_graph(Graph, path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(str(path), 'wb') as file:
+        pickle.dump(Graph, file)
+    print(f'Graph pickled successfully at {path}.')
+
+def load_pickled_graph(path):
+    with open(str(path), 'rb') as file:
+        Graph = pickle.load(file)
+    return Graph
+
+def get_graph_name(suffix=''):
+    return f'{__get_time()}_{suffix}_graph.pickle'
+    # return __get_time() + '_' + suffix + '_graph.pickle'
+
+def __get_time(format='%y%m%d-%H%M%S'):
+    return datetime.datetime.now().strftime(format)

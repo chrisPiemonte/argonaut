@@ -1,15 +1,9 @@
-# import networkx as nx
 import numpy as np
+from .common_utils import *
 import tweepy, gensim, nltk, yaml, os, sys
-# from nltk.corpus import stopwords
-# from nltk.classify import SklearnClassifier
-# import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-from .common_utils import *
-
 USER_AGENT = 'linux:com.example.argumentation:v0.0.1 (by /u/anzianotti)'
-
 
 def getSubComments(comment, allComments, verbose=True):
     allComments.append(comment)

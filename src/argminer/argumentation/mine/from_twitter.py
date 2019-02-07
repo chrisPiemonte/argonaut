@@ -1,10 +1,9 @@
 import tweepy
 import networkx as nx
 from functools import lru_cache
-
 from argminer.utils.twitter_utils import *
-from argminer.argumentation.mine.common import *
 import argminer.utils.common_utils as utils
+from argminer.argumentation.mine.common import *
 import argminer.text.TextAnalyzer as TextAnalyzer
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
@@ -20,7 +19,7 @@ auth.set_access_token(
 api = tweepy.API(auth)
 
 
-def get_debate_graph(query='trump', language='en', mode='comments'):
+def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None):
     # It is a list of one conversation actually
     conversations = __build_conversations(query=query, language=language)
     Graph = None
@@ -30,6 +29,10 @@ def get_debate_graph(query='trump', language='en', mode='comments'):
         Graph = __build_graph_from_users(conversations)
     else:
         raise Exception()
+    if save:
+        suffix = f'twitter_{mode}'
+        output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
+        utils.pickle_graph(Graph, output_path)
     return Graph
 
 @lru_cache(maxsize=None)

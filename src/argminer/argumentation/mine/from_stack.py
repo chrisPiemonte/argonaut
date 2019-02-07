@@ -3,14 +3,13 @@ import networkx as nx
 from random import randint
 from stackapi import StackAPI
 import argminer.utils.common_utils as utils
+from argminer.argumentation.mine.common import *
 import argminer.utils.stack_utils as stack_utils
 import argminer.text.TextAnalyzer as TextAnalyzer
-from argminer.argumentation.mine.common import *
-
 
 site = StackAPI('stackoverflow')
 
-def get_debate_graph(question=None, mode='comments'):
+def get_debate_graph(question=None, mode='comments', save=True, path=None):
     questions_request = stack_utils.QUESTION_URL % question if question is not None else stack_utils.QUESTIONS_URL
     questions = get_questions(questions=questions_request, site=site)
     Graph = None
@@ -20,9 +19,11 @@ def get_debate_graph(question=None, mode='comments'):
         Graph = __build_graph_from_users(questions)
     else:
         raise Exception()
+    if save:
+        suffix = f'stack_{mode}'
+        output_path = Path(utils.INTERIM_DATA_PATH, utils.get_graph_name(suffix=suffix)) if path is None else path
+        utils.pickle_graph(Graph, output_path)
     return Graph
-
-
 
 def __build_graph_from_comments(questions):
     Graph = nx.DiGraph()
@@ -89,18 +90,12 @@ def __build_graph_from_users(questions):
                 Graph.add_edge(comment_user_id, answer_user_id, weight=weight)
     return Graph
 
-
-#
 def get_questions(questions, num_questions=1, site=None, order='desc', sort='votes', filter='withbody'):
     site.page_size = num_questions
     return site.fetch(questions, order=order, sort=sort, filter=filter)
 
-#
 def get_answers(question_id, site=None, order='desc', sort='votes', filter='withbody'):
-    # answers_to    = 'questions/%s/answers'
     return site.fetch(stack_utils.ANSWERS_TO % question_id, order=order, sort=sort, filter=filter)
 
-#
 def get_comments(answer_id, site=None, order='desc', sort='votes', filter='withbody'):
-    # comments_to   = 'answers/%s/comments'
     return site.fetch(stack_utils.COMMENTS_TO % answer_id, order='desc', sort='votes', filter='withbody')

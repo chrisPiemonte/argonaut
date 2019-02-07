@@ -1,15 +1,10 @@
 import numpy as np
 import urllib.request
 from pathlib import Path
+from scipy import spatial
 import tweepy, gensim, nltk, yaml, os, sys
 import argminer.utils.common_utils as utils
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-
-# import networkx as nx
-# from nltk.corpus import stopwords
-# from nltk.classify import SklearnClassifier
-# import matplotlib.pyplot as plt
 
 def __get_model(path, url):
     if path.is_file():
@@ -19,11 +14,10 @@ def __get_model(path, url):
         urllib.request.urlretrieve(url, path, utils.__reporthook)
         print('... download finished.')
     print('Loading the model.')
-    return gensim.models.KeyedVectors.load_word2vec_format(str(path), binary=True)
-
+    return gensim.models.KeyedVectors.load_word2vec_format(str(path), binary=True, limit=50000)
 
 sia   = SentimentIntensityAnalyzer()
-model = __get_model(utils.W2V_GOOGLENEWS_MODEL_PATH, utils.W2V_GOOGLENEWS__MODEL_URL)
+model = __get_model(utils.W2V_GOOGLENEWS_MODEL_PATH, utils.W2V_GOOGLENEWS_MODEL_URL)
 
 def get_sentiment(text):
     return sia.polarity_scores(text)['compound']
@@ -47,4 +41,5 @@ def __avg_sentence_vector(sentence, model, num_features=300):
     return featureVec
 
 def __cosine_similarity(sentence, other_sentence):
-    return round(np.dot(sentence, other_sentence) / (np.linalg.norm(sentence) * np.linalg.norm(other_sentence)), 4)
+    # return round(np.dot(sentence, other_sentence) / (np.linalg.norm(sentence) * np.linalg.norm(other_sentence)), 4)
+    return 1 - spatial.distance.cosine(sentence, other_sentence)
