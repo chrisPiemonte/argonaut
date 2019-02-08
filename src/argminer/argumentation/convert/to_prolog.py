@@ -34,7 +34,6 @@ def edge_to_rel_weight(source, dest, weight, framework='bwaf', n_decimal=2):
         rel_weight   = af.edge_to_rel_weight(source, dest, weight)
     return rel_weight
 
-
 def to_facts(Graph, framework='bwaf', n_decimal=2):
     assert framework in ACCEPTED_FRAMEWORKS
     arguments_set     = set()
@@ -68,4 +67,15 @@ def to_facts(Graph, framework='bwaf', n_decimal=2):
                 arguments_set.add(dest_argument)
                 relationships_set.add(relationship)
 
+    print(f'MINED {framework} FROM GRAPH.')
+    print(f'MINED {len(arguments_set)} ARGUMENTS.')
+    print(f"""MINED {len(relationships_set)} RELATIONSHIPS
+              OF WHICH {count_facts(relationships_set, of_type='attack')} ATTACKS
+              and {count_facts(relationships_set, of_type='support')} SUPPORTS.""")
+    print(f'MINED {len(rel_weights_set)} ARGUMENTS.')
+
     return arguments_set.union(relationships_set).union(rel_weights_set)
+
+
+def count_facts(facts, of_type=''):
+    return len([fact for fact in facts if fact.startswith(of_type)])

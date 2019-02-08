@@ -5,11 +5,13 @@ __pycache__/
 
 .ipynb_checkpoints
 *.pyc
+*_.ipynb
 .DS_Store
 res/credentials.yml
-models/pretrained/
-data/interim/
-data/prolog/
+models/pretrained/*
+!models/pretrained/README.md
+data/interim/*.pickle
+data/prolog/*.pl
 
 # C extensions
 *.so
