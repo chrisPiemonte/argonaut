@@ -1,11 +1,11 @@
 import tweepy
 import networkx as nx
 from functools import lru_cache
-from argminer.utils.twitter_utils import *
-import argminer.utils.common_utils as utils
-from argminer.argumentation.mine.common import *
-import argminer.text.TextAnalyzer as TextAnalyzer
-from argminer.argumentation.convert import to_prolog
+from argonaut.utils.twitter_utils import *
+import argonaut.utils.common_utils as utils
+from argonaut.argumentation.mine.common import *
+import argonaut.text.TextAnalyzer as TextAnalyzer
+from argonaut.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
 TWEET_MODE = 'extended'
@@ -20,7 +20,8 @@ auth.set_access_token(
 api = tweepy.API(auth)
 
 
-def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
+def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None,
+                     multiedges=False, framework='bwaf', n_decimal=2):
     # It is a list of one conversation actually
     conversations = __build_conversations(query=query, language=language)
     Graph = None

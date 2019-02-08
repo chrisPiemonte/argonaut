@@ -1,6 +1,6 @@
 import numpy as np
 from pathlib import Path
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+# from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import tweepy, gensim, nltk, yaml, os, sys, pickle, datetime
 
 # PATHS

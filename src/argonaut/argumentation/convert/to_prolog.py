@@ -1,5 +1,5 @@
-import argminer.utils.common_utils as utils
-from argminer.argumentation.convert.frameworks import bwaf, waf, baf, af
+import argonaut.utils.common_utils as utils
+from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af
 
 ACCEPTED_FRAMEWORKS = ['af', 'baf', 'waf', 'bwaf']
 

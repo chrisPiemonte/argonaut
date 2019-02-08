@@ -1,11 +1,11 @@
 import sys, os, praw
 import networkx as nx
 from bs4 import BeautifulSoup
-import argminer.utils.common_utils as utils
-from argminer.argumentation.mine.common import *
-import argminer.text.TextAnalyzer as TextAnalyzer
-import argminer.utils.reddit_utils as reddit_utils
-from argminer.argumentation.convert import to_prolog
+import argonaut.utils.common_utils as utils
+from argonaut.argumentation.mine.common import *
+import argonaut.text.TextAnalyzer as TextAnalyzer
+import argonaut.utils.reddit_utils as reddit_utils
+from argonaut.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
 reddit = praw.Reddit(

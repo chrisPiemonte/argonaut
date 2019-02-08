@@ -2,11 +2,11 @@ import sys, os
 import networkx as nx
 from random import randint
 from stackapi import StackAPI
-import argminer.utils.common_utils as utils
-from argminer.argumentation.mine.common import *
-import argminer.utils.stack_utils as stack_utils
-import argminer.text.TextAnalyzer as TextAnalyzer
-from argminer.argumentation.convert import to_prolog
+import argonaut.utils.common_utils as utils
+from argonaut.argumentation.mine.common import *
+import argonaut.utils.stack_utils as stack_utils
+import argonaut.text.TextAnalyzer as TextAnalyzer
+from argonaut.argumentation.convert import to_prolog
 
 site = StackAPI('stackoverflow')
 

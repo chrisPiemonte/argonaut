@@ -1,7 +1,7 @@
 import numpy as np
 from .common_utils import *
 import tweepy, gensim, nltk, yaml, os, sys
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+# from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 USER_AGENT = 'linux:com.example.argumentation:v0.0.1 (by /u/anzianotti)'
 

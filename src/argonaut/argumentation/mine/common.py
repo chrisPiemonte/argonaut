@@ -1,10 +1,10 @@
 import networkx as nx
 from pathlib import Path
 import matplotlib.pyplot as plt
-import argminer.text.TextAnalyzer
-import argminer.utils.common_utils as utils
-from argminer.utils.twitter_utils import *
-from argminer.argumentation.convert import to_prolog
+import argonaut.text.TextAnalyzer
+import argonaut.utils.common_utils as utils
+from argonaut.utils.twitter_utils import *
+from argonaut.argumentation.convert import to_prolog
 
 
 def get_edge_weight(similarity, sentiment, other_sentiment):

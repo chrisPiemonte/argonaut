@@ -1,7 +1,7 @@
 import numpy as np
 from .common_utils import *
 import tweepy, gensim, nltk, yaml, os, sys
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+# from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 def extend(api, conversation):
     last_tweet = conversation[-1]

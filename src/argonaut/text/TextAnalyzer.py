@@ -3,7 +3,7 @@ import urllib.request
 from pathlib import Path
 from scipy import spatial
 import tweepy, gensim, nltk, yaml, os, sys
-import argminer.utils.common_utils as utils
+import argonaut.utils.common_utils as utils
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 def __get_model(path, url):
