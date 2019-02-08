@@ -1,6 +1,6 @@
 <p align="center"> <img src="https://raw.githubusercontent.com/chrisPiemonte/argonaut/master/res/img/argonaut.png" width="120"/></p>
 
-# Argonaut
+<h1 align="center"> Argonaut </h1>
 
 ### Setup
 I suggest to setup a virtual environment using [miniconda](http://conda.pydata.org/miniconda.html)
