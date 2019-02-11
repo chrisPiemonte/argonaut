@@ -24,9 +24,7 @@ class Credentials:
         self.reddit  = self.cred['reddit']
         self.twitter = self.cred['twitter']
 
-
 class Comment:
-
     def __init__(self, id, parent, parent_user, text='', parent_text='', user=''):
         self.id    = id
         self.text  = text
@@ -34,10 +32,8 @@ class Comment:
         self.parent      = parent
         self.parent_user = parent_user
         self.parent_text = parent_text
-
     def __repr__(self):
-        return 'Comment({}, {}, {})'.format(self.id, self.user, self.parent)
-
+        return f'Comment({self.id}, {self.user}, {self.parent})'
 
 # callback for showing progress in url download
 def __reporthook(blocknum, blocksize, totalsize):
@@ -53,10 +49,11 @@ def __reporthook(blocknum, blocksize, totalsize):
         sys.stderr.write("read %d\n" % (readsofar,))
 
 def pickle_graph(Graph, path):
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'wb') as file:
         pickle.dump(Graph, file)
-    print(f'Graph pickled successfully at: {path}.')
+    print(f'Graph pickled successfully at: {path}.', '\n')
 
 def load_pickled_graph(path):
     with open(str(path), 'rb') as file:
@@ -65,12 +62,12 @@ def load_pickled_graph(path):
 
 def get_graph_name(suffix=''):
     return f'{__get_time()}_{suffix}_graph.pickle'
-    # return __get_time() + '_' + suffix + '_graph.pickle'
 
 def __get_time(format='%y%m%d-%H%M%S'):
     return datetime.datetime.now().strftime(format)
 
 def save_facts(facts, path):
+    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'w') as file:
         for fact in sorted(facts):

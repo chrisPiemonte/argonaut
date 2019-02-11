@@ -1,0 +1,3 @@
+
+class SourceNotValidException(Exception):
+    pass

@@ -2,7 +2,10 @@
 
 <h1 align="center"> Argonaut </h1>
 
-### Setup
+## Abstract
+Short description.
+
+## Setup
 I suggest to setup a virtual environment using [miniconda](http://conda.pydata.org/miniconda.html)
 
 1. Clone this repo:  <pre>git clone https://github.com/chrisPiemonte/argonaut.git</pre> <pre>cd argonaut/</pre>

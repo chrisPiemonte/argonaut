@@ -2,8 +2,9 @@ import networkx as nx
 from pathlib import Path
 import matplotlib.pyplot as plt
 import argonaut.text.TextAnalyzer
-import argonaut.utils.common_utils as utils
 from argonaut.utils.twitter_utils import *
+import argonaut.utils.common_utils as utils
+from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert import to_prolog
 
 
@@ -49,13 +50,26 @@ def merge_multiedges(MultiDiGraph):
             Graph[u][v]['weight'] /= Graph[u][v]['num']
     return Graph
 
-def save_graph(Graph, suffix, path=None, framework='bwaf', n_decimal=2):
+def save_graph(Graph, suffix, path=None, framework=common.BWAF, n_decimal=2, verbose=False):
     graph_name = utils.get_graph_name(suffix=suffix)
     graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path + '_graph.pickle'
     utils.pickle_graph(Graph, graph_output_path)
-    # save prolog facts
-    facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal)
+    # SAVE PROLOG FACTS
+    facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal, verbose=verbose)
     facts_name = utils.get_facts_name(graph_name=graph_name, framework=framework)
     facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path + '_facts.pl'
     utils.save_facts(facts, facts_output_path)
-    print('Everything saved successfully.')
+    print('Everything saved successfully.', '\n')
+
+def count_nodes(Graph):
+    return len(set(Graph.nodes()))
+
+def count_edges(Graph):
+    # print(sorted(Graph.edges(data=True)))
+    return len(set(Graph.edges()))
+
+def count_edges_with_zero_weight(Graph, n_decimal=2):
+    return len([data['weight'] for _s, _d, data in Graph.edges(data=True) if __is_zero_weight(data['weight'], n_decimal)])
+
+def __is_zero_weight(weight, n_decimal=2):
+    return weight == 0 or weight != weight or round(weight, n_decimal) == 0

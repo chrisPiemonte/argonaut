@@ -6,11 +6,13 @@ import argonaut.utils.common_utils as utils
 from argonaut.argumentation.mine.common import *
 import argonaut.utils.stack_utils as stack_utils
 import argonaut.text.TextAnalyzer as TextAnalyzer
+from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert import to_prolog
 
 site = StackAPI('stackoverflow')
 
-def get_debate_graph(question=None, mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
+def get_debate_graph(question=None, mode='comments', save=True, path=None,
+                     multiedges=False, framework=common.BWAF, n_decimal=2, verbose=False):
     questions_request = stack_utils.QUESTION_URL % question if question is not None else stack_utils.QUESTIONS_URL
     questions = get_questions(questions=questions_request, site=site)
     Graph = None
@@ -25,7 +27,11 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None, multi
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'stack_{mode}'
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+    if verbose:
+        print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
+        print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
+        print(f'NUMBER OF NULL EDGES IN THE GRAPH: {count_edges_with_zero_weight(Graph, n_decimal=n_decimal)}', '\n')
     return Graph
 
 def __build_graph_from_comments(questions):

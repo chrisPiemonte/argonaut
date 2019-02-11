@@ -5,6 +5,7 @@ from argonaut.utils.twitter_utils import *
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.mine.common import *
 import argonaut.text.TextAnalyzer as TextAnalyzer
+from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
@@ -21,9 +22,9 @@ api = tweepy.API(auth)
 
 
 def get_debate_graph(query='trump', language='en', mode='comments', save=True, path=None,
-                     multiedges=False, framework='bwaf', n_decimal=2):
+                     multiedges=False, framework=common.BWAF, n_decimal=2, verbose=False):
     # It is a list of one conversation actually
-    conversations = __build_conversations(query=query, language=language)
+    conversations = __build_conversations(query=query, language=language, verbose=verbose)
     Graph = None
     if mode == 'comments':
         Graph = __build_graph_from_comments(conversations)
@@ -36,20 +37,15 @@ def get_debate_graph(query='trump', language='en', mode='comments', save=True, p
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'twitter_{mode}'
-        # save pickle
-        # graph_name  = utils.get_graph_name(suffix=suffix)
-        # graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path
-        # utils.pickle_graph(Graph, graph_output_path)
-        # save prolog facts
-        # facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal)
-        # facts_name = utils.get_facts_name(graph_name=graph_name)
-        # facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path
-        # utils.save_facts(facts, facts_output_path)
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+    if verbose:
+        print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
+        print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
+        print(f'NUMBER OF NULL EDGES IN THE GRAPH: {count_edges_with_zero_weight(Graph)}', '\n')
     return Graph
 
 @lru_cache(maxsize=None)
-def __build_conversations(query='trump', language='en'):
+def __build_conversations(query='trump', language='en', verbose=False):
     search_options = {
         'q':          query,
         'lang':       language,
@@ -59,9 +55,10 @@ def __build_conversations(query='trump', language='en'):
     tweets   = [[convert(status)] for status in statuses if is_response(status)]
     convs    = [extend(api, tweet) for tweet in tweets]
     merged_convs = merge_conversations(convs)
-    print('RESPONSE TWEETS:             %s' % len(tweets))
-    print('MAX CONVERSATION LENGTH:     %s' % max([len(c) for c in convs]))
-    print('MAX USERS IN A CONVERSATION: %s' % max([get_num_users(c) for c in convs]), '\n')
+    if verbose:
+        print('RESPONSE TWEETS:             %s' % len(tweets))
+        print('MAX CONVERSATION LENGTH:     %s' % max([len(c) for c in convs]))
+        print('MAX USERS IN A CONVERSATION: %s' % max([get_num_users(c) for c in convs]), '\n')
     return merged_convs
 
 

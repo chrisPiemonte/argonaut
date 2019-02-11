@@ -1,6 +1,6 @@
 import argonaut.utils.common_utils as utils
-from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af
 from argonaut.argumentation.convert import common
+from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af
 
 # ACCEPTED_FRAMEWORKS = ['af', 'baf', 'waf', 'bwaf']
 
@@ -35,7 +35,7 @@ def edge_to_rel_weight(source, dest, weight, framework=common.BWAF, n_decimal=2)
         rel_weight   = af.edge_to_rel_weight(source, dest, weight)
     return rel_weight
 
-def to_facts(Graph, framework=common.BWAF, n_decimal=2, verbose=True):
+def to_facts(Graph, framework=common.BWAF, n_decimal=2, verbose=False):
     assert framework in common.ACCEPTED_FRAMEWORKS
     arguments_set     = set()
     relationships_set = set()
@@ -68,13 +68,17 @@ def to_facts(Graph, framework=common.BWAF, n_decimal=2, verbose=True):
                     arguments_set.add(source_argument)
                     arguments_set.add(dest_argument)
                     relationships_set.add(relationship)
+    common.remove_blanks(arguments_set)
+    common.remove_blanks(relationships_set)
+    common.remove_blanks(rel_weights_set)
     if verbose:
+
         print(f'MINED {framework} FROM GRAPH.')
         print(f'MINED {len(arguments_set)} ARGUMENTS.')
         print(f"""MINED {len(relationships_set)} RELATIONSHIPS
                   OF WHICH {count_facts(relationships_set, of_type='attack')} ATTACKS
                   and {count_facts(relationships_set, of_type='support')} SUPPORTS.""")
-        print(f'MINED {len(rel_weights_set)} ARGUMENTS.')
+        print(f'MINED {len(rel_weights_set)} REL_WEIGHTS.', '\n')
 
     return arguments_set.union(relationships_set).union(rel_weights_set)
 

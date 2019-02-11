@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.mine.common import *
 import argonaut.text.TextAnalyzer as TextAnalyzer
+from argonaut.argumentation.convert import common
 import argonaut.utils.reddit_utils as reddit_utils
 from argonaut.argumentation.convert import to_prolog
 
@@ -14,8 +15,9 @@ reddit = praw.Reddit(
     user_agent=reddit_utils.USER_AGENT
 )
 
-def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, multiedges=False, framework='bwaf', n_decimal=2):
-    comments = get_comments(submissionId)
+def get_debate_graph(submissionId=None, mode='comments', save=True, path=None,
+                     multiedges=False, framework=common.BWAF, n_decimal=2, verbose=False):
+    comments = get_comments(submissionId, verbose=verbose)
     Graph = None
     if mode == 'comments':
         Graph = __build_graph_from_comments(comments)
@@ -28,16 +30,21 @@ def get_debate_graph(submissionId=None, mode='comments', save=True, path=None, m
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'reddit_{mode}'
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal)
+        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+    if verbose:
+        print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
+        print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
+        print(f'NUMBER OF NULL EDGES IN THE GRAPH: {count_edges_with_zero_weight(Graph)}', '\n')
     return Graph
 
-def get_comments(submissionId):
+def get_comments(submissionId, verbose=False):
     submission = reddit.submission(submissionId)
-    result     = reddit_utils.getAll(reddit, submissionId, verbose=False)
+    result     = reddit_utils.getAll(reddit, submissionId, verbose=verbose)
     comments   = reddit_utils.to_comments(result)
-    print('SUBMISSION: %s' % submission.title)
-    print('URL:        https://www.reddit.com%s' % submission.permalink)
-    print('NUMBER OF COMMENTS: %s' % len(comments))
+    if verbose:
+        print('SUBMISSION: %s' % submission.title)
+        print('URL:        https://www.reddit.com%s' % submission.permalink)
+        print('NUMBER OF COMMENTS: %s' % len(comments), '\n')
     return comments
 
 def __build_graph_from_comments(comments):
