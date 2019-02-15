@@ -6,6 +6,8 @@ import tweepy, gensim, nltk, yaml, os, sys
 import argonaut.utils.common_utils as utils
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
+verbose = False
+
 def __get_model(path, url, verbose=False):
     if path.is_file():
         if verbose:
@@ -19,18 +21,18 @@ def __get_model(path, url, verbose=False):
     return gensim.models.KeyedVectors.load_word2vec_format(str(path), binary=True, limit=50000)
 
 sia   = SentimentIntensityAnalyzer()
-model = __get_model(utils.W2V_GOOGLENEWS_MODEL_PATH, utils.W2V_GOOGLENEWS_MODEL_URL, verbose=False)
+model = __get_model(utils.W2V_GOOGLENEWS_MODEL_PATH, utils.W2V_GOOGLENEWS_MODEL_URL, verbose=verbose)
 
-def get_sentiment(text):
-    return sia.polarity_scores(text)['compound']
+def get_sentiment(sentence):
+    return sia.polarity_scores(sentence)['compound']
 
-def get_similarity(text, other_text):
-    text_avg_vector = __avg_sentence_vector(text.split(), model=model)
-    other_text_avg_vector = __avg_sentence_vector(other_text.split(), model=model)
+def get_similarity(sentence, other_sentence):
+    sentence_avg_vector = __avg_sentence_vector(sentence.split(), model=model)
+    other_sentence_avg_vector = __avg_sentence_vector(other_sentence.split(), model=model)
     similarity = 0.001
     # if both are non all zeroes vectors
-    if not(__is_all_zeroes(text_avg_vector) or __is_all_zeroes(other_text_avg_vector)):
-        similarity = __cosine_similarity(text_avg_vector, other_text_avg_vector)
+    if not(__is_all_zeroes(sentence_avg_vector) or __is_all_zeroes(other_sentence_avg_vector)):
+        similarity = __cosine_similarity(sentence_avg_vector, other_sentence_avg_vector)
     return similarity
 
 # function to average all words vectors in a given sentence

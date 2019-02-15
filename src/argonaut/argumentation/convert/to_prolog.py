@@ -2,7 +2,6 @@ import argonaut.utils.common_utils as utils
 from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af
 
-# ACCEPTED_FRAMEWORKS = ['af', 'baf', 'waf', 'bwaf']
 
 def node_to_argument(node):
     return f'argument({str(node)}).'
@@ -24,15 +23,15 @@ def edge_to_relationship(source, dest, weight, framework=common.BWAF, n_decimal=
 def edge_to_rel_weight(source, dest, weight, framework=common.BWAF, n_decimal=2):
     assert framework in common.ACCEPTED_FRAMEWORKS
     weight = round(weight, n_decimal)
-    rel_weight   = ''
+    rel_weight = ''
     if framework == common.BWAF:
-        rel_weight   = bwaf.edge_to_rel_weight(source, dest, weight)
+        rel_weight = bwaf.edge_to_rel_weight(source, dest, weight)
     elif framework == common.BAF:
-        rel_weight   = baf.edge_to_rel_weight(source, dest, weight)
+        rel_weight = baf.edge_to_rel_weight(source, dest, weight)
     elif framework == common.WAF:
-        rel_weight   = waf.edge_to_rel_weight(source, dest, weight)
+        rel_weight = waf.edge_to_rel_weight(source, dest, weight)
     elif framework == common.AF:
-        rel_weight   = af.edge_to_rel_weight(source, dest, weight)
+        rel_weight = af.edge_to_rel_weight(source, dest, weight)
     return rel_weight
 
 def to_facts(Graph, framework=common.BWAF, n_decimal=2, verbose=False):
@@ -72,7 +71,6 @@ def to_facts(Graph, framework=common.BWAF, n_decimal=2, verbose=False):
     common.remove_blanks(relationships_set)
     common.remove_blanks(rel_weights_set)
     if verbose:
-
         print(f'MINED {framework} FROM GRAPH.')
         print(f'MINED {len(arguments_set)} ARGUMENTS.')
         print(f"""MINED {len(relationships_set)} RELATIONSHIPS
