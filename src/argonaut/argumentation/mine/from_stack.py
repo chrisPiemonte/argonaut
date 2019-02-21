@@ -2,6 +2,7 @@ import sys, os
 import networkx as nx
 from random import randint
 from stackapi import StackAPI
+import argonaut.utils.io as io
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.mine.common import *
 import argonaut.utils.stack_utils as stack_utils
@@ -27,7 +28,7 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None,
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'stack_{mode}'
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+        io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)
     if verbose:
         print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
         print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
@@ -44,7 +45,7 @@ def __build_graph_from_comments(questions):
     for question in questions:
         question_id = stack_utils.get_question_id(question)
         question_sentiment = TextAnalyzer.get_sentiment(stack_utils.get_text(question))
-        Graph.add_node(question_id)
+        Graph.add_node(question_id, text=stack_utils.get_text(question), user=stack_utils.get_user_id(question))
         answers = get_answers(question_id, site=site)
 
         for answer in answers['items']:
@@ -53,6 +54,8 @@ def __build_graph_from_comments(questions):
             similarity = TextAnalyzer.get_similarity(stack_utils.get_text(question), stack_utils.get_text(answer))
             # compute the weight of the edge
             weight = get_edge_weight(similarity, answer_sentiment, question_sentiment)
+
+            Graph.add_node(answer_id, text=stack_utils.get_text(answer), user=stack_utils.get_user_id(answer))
             Graph.add_edge(answer_id, question_id, weight=weight)
             comments = get_comments(answer_id, site=site)
 
@@ -62,6 +65,8 @@ def __build_graph_from_comments(questions):
                 similarity = TextAnalyzer.get_similarity(stack_utils.get_text(answer), stack_utils.get_text(comment))
                 # compute the weight of the edge
                 weight = get_edge_weight(similarity, comment_sentiment, answer_sentiment)
+
+                Graph.add_node(comment_id, text=stack_utils.get_text(comment), user=stack_utils.get_user_id(comment))
                 Graph.add_edge(comment_id, answer_id, weight=weight)
     return Graph
 
@@ -76,7 +81,12 @@ def __build_graph_from_users(questions):
         question_id        = stack_utils.get_question_id(question)
         question_user_id   = stack_utils.get_user_id(question)
         question_sentiment = TextAnalyzer.get_sentiment(stack_utils.get_text(question))
-        Graph.add_node(question_user_id)
+
+        if question_user_id in Graph.node:
+            Graph.node[question_user_id]['text'].add(stack_utils.get_text(question))
+        else:
+            Graph.add_node(question_user_id, text={stack_utils.get_text(question)})
+        # Graph.add_node(question_user_id)
         answers = get_answers(question_id, site=site)
 
         for answer in answers['items']:
@@ -86,6 +96,11 @@ def __build_graph_from_users(questions):
             similarity       = TextAnalyzer.get_similarity(stack_utils.get_text(answer), stack_utils.get_text(question))
             # compute the weight of the edge
             weight = get_edge_weight(similarity, answer_sentiment, question_sentiment)
+
+            if answer_user_id in Graph.node:
+                Graph.node[answer_user_id]['text'].add(stack_utils.get_text(answer))
+            else:
+                Graph.add_node(answer_user_id, text={stack_utils.get_text(answer)})
             Graph.add_edge(answer_user_id, question_user_id, weight=weight)
             comments = get_comments(answer_id, site=site)
 
@@ -96,6 +111,11 @@ def __build_graph_from_users(questions):
                 similarity        = TextAnalyzer.get_similarity(stack_utils.get_text(comment), stack_utils.get_text(answer))
                 # compute the weight of the edge
                 weight = get_edge_weight(similarity, comment_sentiment, answer_sentiment)
+
+                if tweet.user in Graph.node:
+                    Graph.node[tweet.user]['text'].add(tweet.text)
+                else:
+                    Graph.add_node(tweet.user, text={tweet.text})
                 Graph.add_edge(comment_user_id, answer_user_id, weight=weight)
     return Graph
 

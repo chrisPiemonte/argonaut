@@ -2,6 +2,7 @@ import networkx as nx
 from pathlib import Path
 import matplotlib.pyplot as plt
 import argonaut.text.TextAnalyzer
+import argonaut.utils.io as io
 from argonaut.utils.twitter_utils import *
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.convert import common
@@ -49,17 +50,6 @@ def merge_multiedges(MultiDiGraph):
         if 'num' in data:
             Graph[u][v]['weight'] /= Graph[u][v]['num']
     return Graph
-
-def save_graph(Graph, suffix, path=None, framework=common.BWAF, n_decimal=2, verbose=False):
-    graph_name = utils.get_graph_name(suffix=suffix)
-    graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path + '_graph.pickle'
-    utils.pickle_graph(Graph, graph_output_path)
-    # SAVE PROLOG FACTS
-    facts = to_prolog.to_facts(Graph, framework=framework, n_decimal=n_decimal, verbose=verbose)
-    facts_name = utils.get_facts_name(graph_name=graph_name, framework=framework)
-    facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path + '_facts.pl'
-    utils.save_facts(facts, facts_output_path)
-    print('Everything saved successfully.', '\n')
 
 def count_nodes(Graph):
     return len(set(Graph.nodes()))

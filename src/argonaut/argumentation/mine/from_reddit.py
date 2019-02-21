@@ -1,6 +1,7 @@
 import sys, os, praw
 import networkx as nx
 from bs4 import BeautifulSoup
+import argonaut.utils.io as io
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.mine.common import *
 import argonaut.text.TextAnalyzer as TextAnalyzer
@@ -30,7 +31,7 @@ def get_debate_graph(submissionId=None, mode='comments', save=True, path=None,
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'reddit_{mode}'
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+        io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)
     if verbose:
         print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
         print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
@@ -55,6 +56,10 @@ def __build_graph_from_comments(comments):
             parent_sentiment  = TextAnalyzer.get_sentiment(comment.parent_text)
             similarity = TextAnalyzer.get_similarity(comment.text, comment.parent_text)
             weight = get_edge_weight(similarity, comment_sentiment, parent_sentiment)
+            # ADD NODES ATTRIBUTES
+            Graph.add_node(comment.id, text=comment.text, user=comment.user)
+            Graph.add_node(comment.parent, text=comment.parent_text, user=comment.parent_user)
+            # ADD EDGE
             Graph.add_edge(comment.id, comment.parent, weight=weight)
         else:
             pass
@@ -68,7 +73,16 @@ def __build_graph_from_users(comments):
             parent_sentiment  = TextAnalyzer.get_sentiment(comment.parent_text)
             similarity = TextAnalyzer.get_similarity(comment.text, comment.parent_text)
             weight = get_edge_weight(similarity, comment_sentiment, parent_sentiment)
-            # TODO merge edges
+            # ADD NODES ATTRIBUTES
+            if comment.user in Graph.node:
+                Graph.node[comment.user]['text'].add(comment.text)
+            else:
+                Graph.add_node(comment.user, text={comment.text})
+            if comment.parent_user in Graph.node:
+                Graph.node[comment.parent_user]['text'].add(comment.parent_text)
+            else:
+                Graph.add_node(comment.parent_user, text={comment.parent_text})
+            # ADD EDGE
             Graph.add_edge(comment.user, comment.parent_user, weight=weight)
         else:
             pass

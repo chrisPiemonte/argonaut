@@ -1,5 +1,6 @@
 import tweepy
 import networkx as nx
+import argonaut.utils.io as io
 from functools import lru_cache
 from argonaut.utils.twitter_utils import *
 import argonaut.utils.common_utils as utils
@@ -37,7 +38,7 @@ def get_debate_graph(query='trump', language='en', mode='comments', save=True, p
         Graph = merge_multiedges(Graph)
     if save:
         suffix = f'twitter_{mode}'
-        save_graph(Graph, suffix, path=path, framework=framework, n_decimal=n_decimal, verbose=verbose)
+        io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)
     if verbose:
         print(f'NUMBER OF NODES IN THE GRAPH:      {count_nodes(Graph)}')
         print(f'NUMBER OF EDGES IN THE GRAPH:      {count_edges(Graph)}')
@@ -69,11 +70,15 @@ def __build_graph_from_comments(conversations):
         for i, tweet in enumerate(conv):
             if tweet.parent is not None:
                 answered_tweet = conv[i+1]
+                # COMPUTE THE WEIGHT
                 similarity = TextAnalyzer.get_similarity(tweet.text, answered_tweet.text)
                 tweet_sentiment = TextAnalyzer.get_sentiment(tweet.text)
                 answered_tweet_sentiment = TextAnalyzer.get_sentiment(answered_tweet.text)
-                # or if the edge already exist change the weight
                 weight = get_edge_weight(similarity, tweet_sentiment, answered_tweet_sentiment)
+                # ADD NODES ATTRIBUTES
+                Graph.add_node(tweet.id, text=tweet.text, user=tweet.user)
+                Graph.add_node(answered_tweet.id, text=answered_tweet.text, user=answered_tweet.user)
+                # ADD EDGE
                 Graph.add_edge(tweet.id, answered_tweet.id, weight=weight)
             else:
                 pass
@@ -86,12 +91,21 @@ def __build_graph_from_users(conversations):
         for i, tweet in enumerate(conv):
             if tweet.parent is not None:
                 answered_tweet = conv[i+1]
+                # COMPUTE THE WEIGHT
                 similarity = TextAnalyzer.get_similarity(tweet.text, answered_tweet.text)
                 tweet_sentiment = TextAnalyzer.get_sentiment(tweet.text)
                 answered_tweet_sentiment = TextAnalyzer.get_sentiment(answered_tweet.text)
-                # TODO: or if the edge already exist change the weight
                 weight = get_edge_weight(similarity, tweet_sentiment, answered_tweet_sentiment)
-                # TODO: when multiple edges find a way to merge them
+                # ADD NODES ATTRIBUTES
+                if tweet.user in Graph.node:
+                    Graph.node[tweet.user]['text'].add(tweet.text)
+                else:
+                    Graph.add_node(tweet.user, text={tweet.text})
+                if answered_tweet.user in Graph.node:
+                    Graph.node[answered_tweet.user]['text'].add(answered_tweet.text)
+                else:
+                    Graph.add_node(answered_tweet.user, text={answered_tweet.text})
+                # ADD EDGE
                 Graph.add_edge(tweet.user, answered_tweet.user, weight=weight)
             else:
                 pass
