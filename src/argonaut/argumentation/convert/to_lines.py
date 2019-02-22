@@ -1,31 +1,31 @@
-import argonaut.utils.io as io
 import argonaut.utils.common_utils as utils
 
 
 def user_nodes_to_lines(Graph, sep=','):
     lines = []
-    for node_id in Graph.nodes:
-        text   = list_to_string(Graph.node[node_id].get('text', ''))
-        lines += user_node_to_text(node_id, text, sep=sep)
+    for node_id, data in Graph.nodes(data=True):
+        text = set([e.replace('\n', '') for e in data.get('text', '')])
+        # print(data, 'user_n_to_lines')
+        lines.append([node_id, text])
     return lines
 
 def comment_nodes_to_lines(Graph, sep=','):
     lines = []
-    for node_id in Graph.nodes:
-        text = Graph.node[node_id].get('text', '')
-        user = Graph.node[node_id].get('user', '')
-        lines += comment_node_to_text(node_id, text, user, sep=sep)
+    for node_id, data in Graph.nodes(data=True):
+        text = data.get('text', '').replace('\n', '')
+        user = data.get('user', '')
+        lines.append([node_id, text, user])
     return lines
 
-def edges_to_lines(Graph, sep=','):
+def edges_to_lines(Graph, sep=',', n_decimal=2):
     lines = []
     for source, dest, data in Graph.edges(data=True):
-        weight = str(data['weight']) if 'weight' in data else ''
-        lines += edge_to_text(source, dest, weight, sep=sep)
+        weight = str(round(data['weight'], n_decimal)) if 'weight' in data else ''
+        lines.append([source, dest, weight])
     return lines
 
 
-
+# USELESS ?
 def user_node_to_text(node_id, text, sep=','):
     return f'{node_id}{sep}{text}'
 

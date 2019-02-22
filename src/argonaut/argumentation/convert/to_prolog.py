@@ -1,4 +1,3 @@
-import argonaut.utils.io as io
 import argonaut.utils.common_utils as utils
 from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af

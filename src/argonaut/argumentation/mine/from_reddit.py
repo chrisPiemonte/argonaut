@@ -24,11 +24,11 @@ def get_debate_graph(submissionId=None, mode='comments', save=True, path=None,
         Graph = __build_graph_from_comments(comments)
     elif mode == 'users':
         Graph = __build_graph_from_users(comments)
+        if not multiedges:
+            Graph = merge_multiedges(Graph)
     else:
         raise Exception()
     remove_nones(Graph)
-    if not multiedges:
-        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'reddit_{mode}'
         io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)
@@ -57,8 +57,10 @@ def __build_graph_from_comments(comments):
             similarity = TextAnalyzer.get_similarity(comment.text, comment.parent_text)
             weight = get_edge_weight(similarity, comment_sentiment, parent_sentiment)
             # ADD NODES ATTRIBUTES
-            Graph.add_node(comment.id, text=comment.text, user=comment.user)
-            Graph.add_node(comment.parent, text=comment.parent_text, user=comment.parent_user)
+            if comment.id not in Graph.nodes:
+                Graph.add_node(comment.id, text=comment.text, user=comment.user)
+            if comment.parent not in Graph.nodes:
+                Graph.add_node(comment.parent, text=comment.parent_text, user=comment.parent_user)
             # ADD EDGE
             Graph.add_edge(comment.id, comment.parent, weight=weight)
         else:

@@ -13,6 +13,7 @@ models/pretrained/*
 !models/pretrained/README.md
 data/interim/*.pickle
 data/prolog/*.pl
+data/output/*
 
 # C extensions
 *.so

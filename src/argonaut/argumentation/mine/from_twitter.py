@@ -31,11 +31,11 @@ def get_debate_graph(query='trump', language='en', mode='comments', save=True, p
         Graph = __build_graph_from_comments(conversations)
     elif mode == 'users':
         Graph = __build_graph_from_users(conversations)
+        if not multiedges:
+            Graph = merge_multiedges(Graph)
     else:
         raise Exception()
     remove_nones(Graph)
-    if not multiedges:
-        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'twitter_{mode}'
         io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)

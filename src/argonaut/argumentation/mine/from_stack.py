@@ -21,11 +21,11 @@ def get_debate_graph(question=None, mode='comments', save=True, path=None,
         Graph = __build_graph_from_comments(questions)
     elif mode == 'users':
         Graph = __build_graph_from_users(questions)
+        if not multiedges:
+            Graph = merge_multiedges(Graph)
     else:
         raise Exception()
     remove_nones(Graph)
-    if not multiedges:
-        Graph = merge_multiedges(Graph)
     if save:
         suffix = f'stack_{mode}'
         io.save_graph(Graph, suffix, path=path, mode=mode, framework=framework, n_decimal=n_decimal, verbose=verbose)
@@ -112,10 +112,10 @@ def __build_graph_from_users(questions):
                 # compute the weight of the edge
                 weight = get_edge_weight(similarity, comment_sentiment, answer_sentiment)
 
-                if tweet.user in Graph.node:
-                    Graph.node[tweet.user]['text'].add(tweet.text)
+                if comment_user_id in Graph.node:
+                    Graph.node[comment_user_id]['text'].add(stack_utils.get_text(comment))
                 else:
-                    Graph.add_node(tweet.user, text={tweet.text})
+                    Graph.add_node(comment_user_id, text={stack_utils.get_text(comment)})
                 Graph.add_edge(comment_user_id, answer_user_id, weight=weight)
     return Graph
 

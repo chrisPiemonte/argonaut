@@ -56,7 +56,7 @@ def mine_arguments(source, submission_id, query, question_id, mode,
     assert mode in ACCEPTED_MODES, 'NOT VALID MINING METHOD'
     assert framework in ACCEPTED_FRAMEWORKS, 'NOT VALID FRAMEWORK'
     if verbose:
-        print('START MINING . . .', '\n')
+        print('\n', 'START MINING . . .', '\n')
     if source.lower() == REDDIT:
         assert submission_id is not None, 'SUBMISSION ID NOT PRESENT'
         Graph = from_reddit.get_debate_graph(

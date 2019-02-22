@@ -4,45 +4,49 @@ import argonaut.utils.common_utils as utils
 from argonaut.argumentation.convert import common
 from argonaut.argumentation.convert import to_lines
 from argonaut.argumentation.convert import to_prolog
-import tweepy, gensim, nltk, yaml, os, sys, pickle, datetime
+import tweepy, gensim, nltk, yaml, os, sys, pickle, datetime, csv
 
 
-HEADER_COMMENTS_NODES = 'COMMENT_ID,TEXT,USER'
-HEADER_USERS_NODES    = 'USER_ID,TEXT'
+HEADER_COMMENTS_NODES = ['COMMENT_ID','TEXT','USER']
+HEADER_USERS_NODES    = ['USER_ID','TEXT']
 
-HEADER_EDGES = 'SOURCE,DEST,WEIGHT'
+HEADER_EDGES = ['SOURCE','DEST','WEIGHT']
 
 def write_nodes(Graph, file_path, mode='comments', sep=','):
     file_path = Path(file_path)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(file_path), mode='w') as file:
         if mode == 'comments':
-            writer = csv.writer(file, delimiter=sep, fieldnames=HEADER_COMMENTS_NODES)
+            # WRITE HEADER
+            writer = csv.writer(file, delimiter=sep)
+            writer.writerow([col for col in HEADER_COMMENTS_NODES])
             for line in to_lines.comment_nodes_to_lines(Graph, sep=sep):
-                writer.writerow(line)
+                writer.writerow([elem for elem in line])
         elif mode == 'users':
-            writer = csv.writer(file, delimiter=sep, fieldnames=HEADER_USERS_NODES)
+            writer = csv.writer(file, delimiter=sep)
+            writer.writerow([col for col in HEADER_USERS_NODES])
             for line in to_lines.user_nodes_to_lines(Graph, sep=sep):
-                writer.writerow(line)
+                writer.writerow([elem for elem in line])
         else:
             raise(Exception)
-    print(f'CSV nodes writed successfully at: {file_path}.', '\n')
+    print(f'CSV nodes writed successfully at: {file_path}.')
 
-def write_edges(Graph, file_path, sep=','):
+def write_edges(Graph, file_path, sep=',', n_decimal=2):
     file_path = Path(file_path)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(file_path), mode='w') as file:
-        writer = csv.writer(file, delimiter=sep, fieldnames=HEADER_EDGES)
-        for line in to_lines.edges_to_lines(Graph, sep=sep):
-            writer.writerow(line)
-    print(f'CSV edges writed successfully at: {file_path}.', '\n')
+        writer = csv.writer(file, delimiter=sep)
+        writer.writerow([col for col in HEADER_EDGES])
+        for line in to_lines.edges_to_lines(Graph, sep=sep, n_decimal=n_decimal):
+            writer.writerow([elem for elem in line])
+    print(f'CSV edges writed successfully at: {file_path}.')
 
-def save_graph_description_csv(Graph, path, mode='comments', sep=','):
+def save_graph_description_csv(Graph, path, mode='comments', sep=',', n_decimal=2):
     nodes_path = str(path).replace('_description.csv', '_nodes_description.csv')
     edges_path = str(path).replace('_description.csv', '_edges_description.csv')
 
     write_nodes(Graph, nodes_path, mode=mode, sep=sep)
-    write_edges(Graph, edges_path, mode=mode, sep=sep)
+    write_edges(Graph, edges_path, sep=sep, n_decimal=n_decimal)
 
 
 ########################################################
@@ -53,7 +57,7 @@ def pickle_graph(Graph, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'wb') as file:
         pickle.dump(Graph, file)
-    print(f'Graph pickled successfully at: {path}.', '\n')
+    print(f'Graph pickled successfully at: {path}.')
 
 def save_graph(Graph, suffix, path=None, framework=common.BWAF, mode='comments', n_decimal=2, verbose=False):
 
@@ -75,7 +79,7 @@ def save_graph(Graph, suffix, path=None, framework=common.BWAF, mode='comments',
     # SAVE
     pickle_graph(Graph, graph_output_path)
     save_facts(facts, facts_output_path)
-    save_graph_description_csv(Graph, csv_desc_output_path, mode=mode, sep=',')
+    save_graph_description_csv(Graph, csv_desc_output_path, mode=mode, sep=',', n_decimal=n_decimal)
 
     print('Everything saved successfully.', '\n')
 

@@ -40,6 +40,13 @@ def remove_nones(Graph):
 def merge_multiedges(MultiDiGraph):
     Graph = nx.DiGraph()
     for u, v, data in MultiDiGraph.edges(data=True):
+        Graph.add_node(u)
+        Graph.add_node(v)
+        # COPY ATTRIBUTES
+        for attribute in MultiDiGraph.node[u]:
+            Graph.node[u][attribute] = MultiDiGraph.node[u][attribute]
+        for attribute in MultiDiGraph.node[v]:
+            Graph.node[v][attribute] = MultiDiGraph.node[v][attribute]
         w = data['weight'] if 'weight' in data else 0.0
         if Graph.has_edge(u, v):
             Graph[u][v]['weight'] += w
