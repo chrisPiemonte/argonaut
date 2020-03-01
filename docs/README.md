@@ -1,3 +1,7 @@
 # Documentation
 
-Read it [here](https://github.com/chrisPiemonte/Argument-Mining)
+
+- Read it on [Overleaf](https://www.overleaf.com/read/qhhnggycrkfk) !
+
+
+- LaTeX repository [here](https://github.com/chrisPiemonte/Argument-Mining).
