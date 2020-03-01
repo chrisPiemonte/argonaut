@@ -13,7 +13,9 @@ models/pretrained/*
 !models/pretrained/README.md
 data/interim/*.pickle
 data/prolog/*.pl
-data/output/*
+data/output/*.pickle
+data/output/*.pl
+data/output/*.csv
 
 # C extensions
 *.so
