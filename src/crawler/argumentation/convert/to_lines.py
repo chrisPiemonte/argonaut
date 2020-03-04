@@ -1,4 +1,4 @@
-import argonaut.utils.common_utils as utils
+import crawler.utils.common_utils as utils
 
 
 def user_nodes_to_lines(Graph, sep=','):

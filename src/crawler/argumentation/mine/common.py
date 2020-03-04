@@ -1,12 +1,12 @@
 import networkx as nx
 from pathlib import Path
 import matplotlib.pyplot as plt
-import argonaut.text.TextAnalyzer
-import argonaut.utils.io as io
-from argonaut.utils.twitter_utils import *
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert import to_prolog
+import crawler.text.TextAnalyzer
+import crawler.utils.io as io
+from crawler.utils.twitter_utils import *
+import crawler.utils.common_utils as utils
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert import to_prolog
 
 
 def get_edge_weight(similarity, sentiment, other_sentiment):

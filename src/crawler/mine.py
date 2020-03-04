@@ -1,9 +1,9 @@
 import click
-from argonaut.argumentation.convert.common import *
-from argonaut.argumentation.mine import from_stack
-from argonaut.argumentation.mine import from_reddit
-from argonaut.argumentation.mine import from_twitter
-from argonaut.utils.exceptions.custom_exceptions import *
+from crawler.argumentation.convert.common import *
+from crawler.argumentation.mine import from_stack
+from crawler.argumentation.mine import from_reddit
+from crawler.argumentation.mine import from_twitter
+from crawler.utils.exceptions.custom_exceptions import *
 
 REDDIT  = 'reddit'
 TWITTER = 'twitter'
@@ -97,6 +97,7 @@ def mine_arguments(source, submission_id, query, question_id, mode,
         raise(SourceNotValidException('SOURCE NOT VALID'))
     # print(source, submission_id, mode, not no_save, path, multiedges, framework, num_decimal, verbose)
     print('. . . END MINING', '\n')
+
 
 if __name__ == '__main__':
     mine_arguments()

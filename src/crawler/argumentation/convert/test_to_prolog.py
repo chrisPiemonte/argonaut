@@ -1,7 +1,7 @@
 import unittest
 import networkx as nx
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert.to_prolog import *
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert.to_prolog import *
 
 
 class TestToProlog(unittest.TestCase):

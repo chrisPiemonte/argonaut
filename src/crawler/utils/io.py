@@ -1,9 +1,9 @@
 import numpy as np
 from pathlib import Path
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert import to_lines
-from argonaut.argumentation.convert import to_prolog
+import crawler.utils.common_utils as utils
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert import to_lines
+from crawler.argumentation.convert import to_prolog
 import tweepy, gensim, nltk, yaml, os, sys, pickle, datetime, csv
 
 

@@ -1,6 +1,6 @@
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert.frameworks import bwaf, waf, baf, af
+import crawler.utils.common_utils as utils
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert.frameworks import bwaf, waf, baf, af
 
 
 def node_to_argument(node):

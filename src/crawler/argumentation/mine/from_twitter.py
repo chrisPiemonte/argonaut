@@ -1,13 +1,13 @@
 import tweepy
 import networkx as nx
-import argonaut.utils.io as io
+import crawler.utils.io as io
 from functools import lru_cache
-from argonaut.utils.twitter_utils import *
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.mine.common import *
-import argonaut.text.TextAnalyzer as TextAnalyzer
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert import to_prolog
+from crawler.utils.twitter_utils import *
+import crawler.utils.common_utils as utils
+from crawler.argumentation.mine.common import *
+import crawler.text.TextAnalyzer as TextAnalyzer
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert import to_prolog
 
 credentials = Credentials(utils.CREDENTIALS_PATH)
 TWEET_MODE = 'extended'

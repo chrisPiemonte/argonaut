@@ -2,13 +2,13 @@ import sys, os
 import networkx as nx
 from random import randint
 from stackapi import StackAPI
-import argonaut.utils.io as io
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.mine.common import *
-import argonaut.utils.stack_utils as stack_utils
-import argonaut.text.TextAnalyzer as TextAnalyzer
-from argonaut.argumentation.convert import common
-from argonaut.argumentation.convert import to_prolog
+import crawler.utils.io as io
+import crawler.utils.common_utils as utils
+from crawler.argumentation.mine.common import *
+import crawler.utils.stack_utils as stack_utils
+import crawler.text.TextAnalyzer as TextAnalyzer
+from crawler.argumentation.convert import common
+from crawler.argumentation.convert import to_prolog
 
 site = StackAPI('stackoverflow')
 

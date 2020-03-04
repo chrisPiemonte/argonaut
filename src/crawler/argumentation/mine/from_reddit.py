@@ -1,15 +1,15 @@
 import sys, os, praw
 import networkx as nx
 from bs4 import BeautifulSoup
-import argonaut.utils.io as io
-import argonaut.utils.common_utils as utils
-from argonaut.argumentation.mine.common import *
-import argonaut.text.TextAnalyzer as TextAnalyzer
-from argonaut.argumentation.convert import common
-import argonaut.utils.reddit_utils as reddit_utils
-from argonaut.argumentation.convert import to_prolog
+import crawler.utils.io as io
+import crawler.utils.common_utils as utils
+from crawler.argumentation.mine.common import *
+import crawler.text.TextAnalyzer as TextAnalyzer
+from crawler.argumentation.convert import common
+import crawler.utils.reddit_utils as reddit_utils
+from crawler.argumentation.convert import to_prolog
 
-credentials = Credentials(utils.CREDENTIALS_PATH)
+credentials = utils.Credentials(utils.CREDENTIALS_PATH)
 reddit = praw.Reddit(
     client_id=credentials.reddit['CLIENT_ID'],
     client_secret=credentials.reddit['CLIENT_SECRET'],
