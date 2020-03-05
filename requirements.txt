@@ -24,7 +24,7 @@ msgpack==0.5.6
 tables==3.4.4
 tweepy==3.6.0
 twitter==1.18.0
-pyyaml==3.13
+pyyaml==5.1
 stackapi==0.1.9
 selenium==3.141.0
 praw==6.1.0
