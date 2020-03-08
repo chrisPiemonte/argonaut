@@ -29,12 +29,16 @@ class GraphDrawer:
         self.options = options
 
     
-    def draw(self, ax: SubplotBase) -> None:
+    def draw(self, ax: SubplotBase, title: str = '') -> None:
         """[summary]
         
         Arguments:
             ax {SubplotBase} -- [description]
+        
+        Keyword Arguments:
+            title {str} -- [description] (default: {''})
         """
+        ax.set_title(title, fontsize=16)
         pos = nx.spring_layout(self.graph)
         if self.options['draw_edge_labels']:
             # self.options['edge_labels'] = nx.get_edge_attributes(self.graph, 'weight')
