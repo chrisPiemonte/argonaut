@@ -1,7 +1,9 @@
 % :- module(baf, [baf/1]).
 
+% [af_semantics].
+
 % import af graph
-:- ['../data/af'].
+:- ["../../data/prolog/kb/example/af"].
 
 % param Argument - INPUT   - argument
 % param Defender - OUTPUT  - a defender
