@@ -3,8 +3,10 @@
 :- [utils].
 % :- use_module(library(lists)).
 :- use_module(library(pairs)).
-:- ["../../data/prolog/kb/example/dummy_graph"].
 
+% :- ["../../data/prolog/kb/example/dummy_graph"].
+% "../../data/prolog/kb/reddit/users/_facts.pl".
+% "../../data/prolog/kb/twitter/users/_facts.pl".
 % gino(SE) :-
 % stable_extensions(SE).
 
@@ -17,7 +19,8 @@
 % devo caricare il risultato di una extension ed il grafo totale anche
 % così posso rankare ogni subset della extension
 
-
+edge(U, V) :-
+    attack(U, V) ; attack(V, U).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

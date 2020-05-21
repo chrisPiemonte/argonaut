@@ -3,7 +3,7 @@
 % [af_semantics].
 
 % import af graph
-:- ["../../data/prolog/kb/example/af"].
+% :- ["../../data/prolog/kb/example/af"].
 
 % param Argument - INPUT   - argument
 % param Defender - OUTPUT  - a defender

@@ -4,9 +4,10 @@
 get_shorter_list(List1, List2, ShorterList) :- 
     length(List1, L1),
     length(List2, L2),
-    (  L1 =< L2
-        -> ShorterList = List1
-        ;  ShorterList = List2
+    (  L1 =< L2 -> 
+        ShorterList = List1
+    ;  
+        ShorterList = List2
     ).
 
 
