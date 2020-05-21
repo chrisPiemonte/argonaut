@@ -4,7 +4,7 @@ from crawler.argumentation.convert.frameworks import bwaf, waf, baf, af
 
 
 def node_to_argument(node):
-    return f'argument({str(node)}).'
+    return f"argument('{str(node)}')."
 
 def edge_to_relationship(source, dest, weight, framework=common.BWAF, n_decimal=2):
     assert framework in common.ACCEPTED_FRAMEWORKS

@@ -51,6 +51,8 @@ def get_comments(submissionId, verbose=False):
 def __build_graph_from_comments(comments):
     Graph = nx.MultiDiGraph()
     for i, comment in enumerate(comments):
+        # TODO: change lower issue
+        # comment.user = comment.user.lower() if comment.user else comment.user
         if comment.parent is not None:
             comment_sentiment = TextAnalyzer.get_sentiment(comment.text)
             parent_sentiment  = TextAnalyzer.get_sentiment(comment.parent_text)
@@ -70,6 +72,9 @@ def __build_graph_from_comments(comments):
 def __build_graph_from_users(comments):
     Graph = nx.MultiDiGraph()
     for i, comment in enumerate(comments):
+        # TODO: change lower issue
+        # comment.user = comment.user.lower() if comment.user else comment.user
+        # comment.parent_user = comment.parent_user.lower() if comment.parent_user else comment.parent_user
         if comment.parent is not None:
             comment_sentiment = TextAnalyzer.get_sentiment(comment.text)
             parent_sentiment  = TextAnalyzer.get_sentiment(comment.parent_text)
