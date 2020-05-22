@@ -45,6 +45,9 @@ I suggest to setup a virtual environment using [miniconda](http://conda.pydata.o
 
 5. Check the notebooks: <pre>jupyter lab</pre>
 
+## Usage
+![Walkthrough](https://github.com/chrisPiemonte/argonaut/blob/master/res/img/walkthrough.gif?raw=true)
+
 ## Full doc
 
 Read the full documentation on [Overleaf](https://www.overleaf.com/read/qhhnggycrkfk) !
