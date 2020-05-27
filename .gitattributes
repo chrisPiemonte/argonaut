@@ -1,2 +1,2 @@
 notebooks/* linguist-vendored
-*.pl linguist-language=Perl
+*.pl linguist-language=Prolog
