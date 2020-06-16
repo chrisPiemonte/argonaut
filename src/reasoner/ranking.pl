@@ -1,69 +1,29 @@
+:- module(ranking, [
+    rank/3,
+    score_by_paths/2,
+    score_by_paths_normalized/2,
+    score_by_denfence_indegree/2
+]).
 
-:- [af_semantics].
-:- [utils].
+
+:- ensure_loaded(utils).
+:- ensure_loaded(graph).
 % :- use_module(library(lists)).
 :- use_module(library(pairs)).
+:- style_check(-singleton).
 
-% :- ["../../data/prolog/kb/example/dummy_graph"].
-% "../../data/prolog/kb/reddit/users/_facts.pl".
-% "../../data/prolog/kb/twitter/users/_facts.pl".
-% gino(SE) :-
-% stable_extensions(SE).
+% :- ["../../data/prolog/kb/example/baf"].
 
-% graph distance metrics
-
-% PROVARE CON 
-% ?- preferred_extensions(AEs).
-% AEs = [[a, c, f], [a, c, g, h], [a, d, f], [a, d, g, h]].
-
-% devo caricare il risultato di una extension ed il grafo totale anche
-% così posso rankare ogni subset della extension
-
-edge(U, V) :-
-    attack(U, V) ; attack(V, U).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-path(R_2, Xs, A, Z) :- 
-    all_dif(Xs),
-    walk(R_2, Xs, A, Z).
-
-all_dif(Xs) :-                          % enforce pairwise term inequality
-   freeze(Xs, all_dif_aux(Xs,[])).      % (may be delayed)
-
-all_dif_aux([], _).
-all_dif_aux([E|Es], Vs) :-               
-   maplist(dif(E), Vs),                 % is never delayed
-   freeze(Es, all_dif_aux(Es,[E|Vs])).  % (may be delayed)
-
-:- meta_predicate walk(2, ?, ?, ?).
-walk(R_2, [X0|Xs], X0,X) :-
-   walk_from_to_step(Xs, X0,X, R_2).
-
-:- meta_predicate walk_from_to_step(?, ?, ?, 2).
-walk_from_to_step([], X,X, _).
-walk_from_to_step([X1|Xs], X0,X, R_2) :-
-   call(R_2, X0,X1),
-   walk_from_to_step(Xs, X1,X, R_2).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SCORE FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% usage
-% param 1 - INPUT  - predicate
-% param 2 - OUTPUT - all paths
-% param 2 - INPUT  - starting node of the resulting path
-% param 2 - INPUT  - ending node of the resulting path
-paths(R_2, Paths, A, Z) :-
-	findall(Path, path(R_2, Path, A, Z), Paths).
-
-
-% get the first shortest path it finds
-shortest_path(R_2, Path, A, Z) :-
-    paths(R_2, Paths, A, Z),
-    select_element(get_shorter_list, Paths, Path),
-    !.
-
-% usage score_by_paths([a, f, g], S). -> 10
+% usage trace([a, f, g], S). -> 10
 score_by_paths([], 0) :- !.
 score_by_paths([H], 0) :- !.
 score_by_paths([Node1, Node2 | Nodes], Score) :-
@@ -85,16 +45,43 @@ score_by_paths_normalized([Node1, Node2 | Nodes], Score) :-
 
 sum_distances(Node, [], 0).
 sum_distances(Node, [OtherNode | Nodes], Sum) :-
-    shortest_path(edge, Path, Node, OtherNode),
-    length(Path, CurrLength),
+    (graph:shortest_path(graph:edge, Path, Node, OtherNode) ->
+        graph:shortest_path(graph:edge, Path, Node, OtherNode),
+        length(Path, CurrLength)
+    ;
+        setof(Arg, argument(Arg), Args),
+        length(Args, CurrLength)
+    ),
+    
     sum_distances(Node, Nodes, RestSum), 
     !,
     Sum is CurrLength + RestSum.
 
 
+score_by_attack_indegree([], 0) :- !.
+score_by_attack_indegree([H|T], Score) :- 
+    graph:set_defense_relationships,
+    graph:indegree(attack, H, InDegreeH),
+    score_by_denfence_indegree(T, Rest),
+    Score is InDegreeH + Rest.
+
+
+% score_by_indegree([], EdgeType, 0) :- !.
+% score_by_indegree([H|T], EdgeType, Score) :- 
+%     graph:indegree(EdgeType, H, InDegreeH),
+%     score_by_indegree(T, EdgeType, Rest),
+%     Score is InDegreeH + Rest.
+
+score_by_denfence_indegree([], 0) :- !.
+score_by_denfence_indegree([H|T], Score) :- 
+    graph:set_defense_relationships,
+    graph:indegree(graph:defends, H, InDegreeH),
+    score_by_denfence_indegree(T, Rest),
+    Score is (-1 * InDegreeH) + Rest.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RANK %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % param 1 - INPUT  - ScoringFunc/2 is a function that, given an extension, returns a score
