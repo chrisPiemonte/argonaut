@@ -1,11 +1,11 @@
 %:- ensure_loaded(lib_generic).
 :- ensure_loaded("arguer/semantics").
 % :- [af_semantics].
-:- ensure_loaded("../pazi/arguer/example.af").
+:- ensure_loaded("arguer/example.af").
 :- [ranking].
 :- [utils].
 :- style_check(-singleton).
-:- set_prolog_flag(unknown, fail).
+% :- set_prolog_flag(unknown, fail).
 :- ensure_loaded(library(lists)).
 
 argonaut :-

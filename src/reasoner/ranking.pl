@@ -52,7 +52,6 @@ sum_distances(Node, [OtherNode | Nodes], Sum) :-
         setof(Arg, argument(Arg), Args),
         length(Args, CurrLength)
     ),
-    
     sum_distances(Node, Nodes, RestSum), 
     !,
     Sum is CurrLength + RestSum.

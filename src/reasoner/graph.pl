@@ -4,7 +4,10 @@
     paths/4,
     shortest_path/4,
     defender/2,
-    defenders/2
+    defenders/2,
+    indegree/3,
+    closeness/3,
+    farness/3
 ]).
 
 
@@ -19,12 +22,6 @@ edge(U, V) :-
 
 diredge(U, V) :-
     attack(U, V).
-
-
-indegree(EdgeType, Node, Val) :-
-    findall(Source, call(EdgeType, Source, Node), Sources),
-    length(Sources, Val).
-
 
 %
 path(R_2, Xs, A, Z) :- 
@@ -68,8 +65,6 @@ shortest_path(R_2, Path, A, Z) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NODE METRICS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% RELATIONSHIP METRICS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DEFENSE GRAPH %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % param Argument - INPUT   - argument
@@ -105,3 +100,33 @@ set_defense_relationships :-
 
 
 % ACTUAL METRICS based on centrality, modularity or something else
+
+indegree(EdgeType, Node, Val) :-
+    findall(Source, call(EdgeType, Source, Node), Sources),
+    length(Sources, Val).
+
+
+closeness(EdgeType, Node, Closeness) :-
+    setof(Arg, argument(Arg), Args),
+    length(Args, N),
+    avg_all_shortest_paths_rec(EdgeType, Node, Args, 0, Val),
+    Closeness is (N - 1) / Val.
+
+farness(EdgeType, Node, Farness) :-
+    setof(Arg, argument(Arg), Args),
+    length(Args, N),
+    avg_all_shortest_paths_rec(EdgeType, Node, Args, 0, Val),
+    Farness is Val / (N - 1).
+
+avg_all_shortest_paths_rec(_, _, [], Acc, Acc) :- !.
+avg_all_shortest_paths_rec(EdgeType, Node, [OtherNode|Rest], Acc, Res) :-
+    (shortest_path(EdgeType, ShortestPath, Node, OtherNode) ->
+        length(ShortestPath, CurrVal)
+    ;
+        % TODO: Choose how to behave
+        setof(Arg, argument(Arg), Args),
+        length(Args, CurrVal)
+    ),
+    % write(Node), write(OtherNode), write(' -> '), write(CurrVal), nl, nl,
+    NextAcc is CurrVal + Acc,
+    avg_all_shortest_paths_rec(EdgeType, Node, Rest, NextAcc, Res).
