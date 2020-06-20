@@ -1,12 +1,11 @@
-%:- ensure_loaded(lib_generic).
 :- ensure_loaded("arguer/semantics").
-% :- [af_semantics].
-:- ensure_loaded("arguer/example.af").
-:- [ranking].
-:- [utils].
+% :- ensure_loaded("arguer/example.af").
+:- ensure_loaded("../../data/prolog/kb/twitter/comments/_facts.pl").
+:- ensure_loaded(ranking).
+:- ensure_loaded(utils).
 :- style_check(-singleton).
-% :- set_prolog_flag(unknown, fail).
 :- ensure_loaded(library(lists)).
+% :- set_prolog_flag(unknown, fail).
 
 argonaut :-
 	repeat,
@@ -48,7 +47,7 @@ argonaut_main_menu(MenuChoice) :-
 	write('       1 - Load mined data (AF)'),nl,
 	write('       2 - Choose an extension semantic and rank its elements by a criteria'),nl,
 	write('       0 - Quit'),nl,nl,
-	read_int_choice('Enter your choice', 0, 2, MenuChoice),
+	utils:read_int_choice('Enter your choice', 0, 2, MenuChoice),
 	!.
 
 argonaut_process_choice(0) :- % Exit
@@ -74,7 +73,7 @@ extension_menu_options(MenuChoice) :-
 	write('       5 - Preferred'),nl,
 	write('       6 - Grounded'),nl,
 	write('       0 - Quit'),nl,nl,
-	read_int_choice('Enter your choice', 0, 6, MenuChoice),
+	utils:read_int_choice('Enter your choice', 0, 6, MenuChoice),
 	!.
 
 extension_menu_process_choice(0) :- % Exit
@@ -141,8 +140,10 @@ rank_menu_options(MenuChoice) :-
 	write('              2 - Normalized distance'),nl,
 	write('              3 - In-degree in attack-graph'),nl,
 	write('              4 - In-degree in defence-graph'),nl,
+	write('              5 - Closeness in attack-graph'),nl,
+	write('              6 - Closeness in defence-graph'),nl,
 	write('              0 - Quit'),nl,nl,
-	read_int_choice('Enter your choice', 0, 4, MenuChoice),
+	utils:read_int_choice('Enter your choice', 0, 6, MenuChoice),
 	!.
 
 rank_menu_process_choice(0) :- % Exit
@@ -191,8 +192,32 @@ rank_menu_process_choice(4) :-
     nb_getval(extension_desc, ExtensionDesc),
     write(ExtensionDesc), write('Extension: '),nl,
     write(Extension),nl,nl,
-    write('Ranked by in-degree in defence graph: '),nl,
-    rank(ranking:score_by_denfence_indegree, Extension, RankedExtension),
+    write('Ranked by in-degree in defense graph: '),nl,
+    rank(ranking:score_by_defense_indegree, Extension, RankedExtension),
+    write(RankedExtension),nl,
+    nl.
+
+rank_menu_process_choice(5) :- 
+    !,
+    nl,
+    nb_getval(extension, Extension),
+    nb_getval(extension_desc, ExtensionDesc),
+    write(ExtensionDesc), write('Extension: '),nl,
+    write(Extension),nl,nl,
+    write('Ranked by closeness in attack graph: '),nl,
+    rank(ranking:score_by_attack_closeness, Extension, RankedExtension),
+    write(RankedExtension),nl,
+    nl.
+
+rank_menu_process_choice(6) :- 
+    !,
+    nl,
+    nb_getval(extension, Extension),
+    nb_getval(extension_desc, ExtensionDesc),
+    write(ExtensionDesc), write('Extension: '),nl,
+    write(Extension),nl,nl,
+    write('Ranked by closeness in defense graph: '),nl,
+    rank(ranking:score_by_defense_closeness, Extension, RankedExtension),
     write(RankedExtension),nl,
     nl.
 
@@ -200,7 +225,7 @@ rank_menu_process_choice(4) :-
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%% WRAPPERS %%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SEMANTIC:EXTENSIONS WRAPPERS %%%%%%%%%%%%%%%%%%%%%%%%%
 
 get_conflict_free_sets_wrapper(CFSets) :-
     (\+current_predicate(cf:cfree/1) ->
