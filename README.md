@@ -62,7 +62,9 @@ I suggest to setup a virtual environment using [miniconda](http://conda.pydata.o
 ### Usage
 Now you can either:
 - Check the notebooks by running: <pre>jupyter lab</pre>
-- Run the Argumentation Mining framework by running: <pre>./src/run.sh</pre>
+- Run the Argumentation Mining framework by running: 
+  - <pre>cd src</pre>
+  - <pre>./run.sh</pre>
   - you can edit the script to change the parameters (source, type of the output graph, type of argumentation framework,..)
 
 ## Extensions generations & ranking
