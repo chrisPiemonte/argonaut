@@ -6,13 +6,13 @@
 
 
 ## Overview
-There are two main goal:
+This project has two main goals:
 
-- **Mining**: 
+- **Mining from social media**: 
   - **Problem**: mining arguments from online debates (considering comments as arguments) results in a tree
   - **Solution**: treat users as nodes instead, basically starting from the comments tree and merging arguments with the same user
   
-- **Reasoning**: 
+- **Generate eand rank extensions**: 
   - **Problem**: find an hybrid approach between Extensional-Semantics and Ranking-Based Semantics
   - **Solution**: compute subsets that satisfy an arbitrary semantic (preferred, conflict-free, ecc) and then rank these subsets by a function **_f: Subset -> N_**
 
