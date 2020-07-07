@@ -1,5 +1,6 @@
 import numpy as np
 from pathlib import Path
+from datetime import datetime as dt
 import crawler.utils.common_utils as utils
 from crawler.argumentation.convert import common
 from crawler.argumentation.convert import to_lines
@@ -71,10 +72,12 @@ def save_graph(Graph, suffix, path=None, framework=common.BWAF, mode='comments',
     # graph_output_path = Path(utils.INTERIM_DATA_PATH, graph_name) if path is None else path + '_graph.pickle'
     # facts_output_path = Path(utils.PROLOG_DATA_PATH, facts_name) if path is None else path + '_facts.pl'
 
-    graph_output_path    = Path(utils.OUTPUT_DATA_PATH, graph_name) if path is None else path + '_graph.pickle'
-    facts_output_path    = Path(utils.OUTPUT_DATA_PATH, facts_name) if path is None else path + '_facts.pl'
-    csv_desc_output_path = Path(utils.OUTPUT_DATA_PATH, csv_desc_name) if path is None else path + '_description.csv'
-    plot_output_path     = Path(utils.OUTPUT_DATA_PATH, plot_name) if path is None else path + '_plot.png'
+    current_time = dt.now().strftime("%Y%m%d_%H_%M_%S")
+
+    graph_output_path    = Path(utils.OUTPUT_DATA_PATH, graph_name) if path is None else Path(path, current_time) / '_graph.pickle'
+    facts_output_path    = Path(utils.OUTPUT_DATA_PATH, facts_name) if path is None else Path(path, current_time) / '_facts.pl'
+    csv_desc_output_path = Path(utils.OUTPUT_DATA_PATH, csv_desc_name) if path is None else Path(path, current_time) / '_description.csv'
+    plot_output_path     = Path(utils.OUTPUT_DATA_PATH, plot_name) if path is None else Path(path, current_time) / '_plot.png'
 
     # SAVE
     pickle_graph(Graph, graph_output_path)

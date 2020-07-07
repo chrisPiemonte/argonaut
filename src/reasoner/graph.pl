@@ -16,9 +16,9 @@
 :- ensure_loaded("arguer/lib_arguer").
 :- ensure_loaded(library(lists)).
 
+
 edge(U, V) :-
     attack(U, V) ; attack(V, U).
-
 
 diredge(U, V) :-
     attack(U, V).
@@ -62,8 +62,6 @@ shortest_path(R_2, Path, A, Z) :-
     utils:select_element(utils:get_shorter_list, Paths, Path),
     !.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NODE METRICS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DEFENSE GRAPH %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,8 +96,7 @@ set_defense_relationships :-
 
 
 
-
-% ACTUAL METRICS based on centrality, modularity or something else
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% NODE METRICS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 indegree(EdgeType, Node, Val) :-
     findall(Source, call(EdgeType, Source, Node), Sources),

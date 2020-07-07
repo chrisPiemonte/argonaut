@@ -1,6 +1,6 @@
 :- ensure_loaded("arguer/semantics").
 % :- ensure_loaded("arguer/example.af").
-:- ensure_loaded("../../data/prolog/kb/twitter/comments/_facts.pl").
+% :- ensure_loaded("../../data/prolog/kb/twitter/comments/_facts.pl").
 :- ensure_loaded(ranking).
 :- ensure_loaded(utils).
 :- style_check(-singleton).
