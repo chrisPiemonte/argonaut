@@ -67,13 +67,13 @@ argonaut_process_choice(2) :- % VAF
 extension_menu_options(MenuChoice) :-
 	write('- Choose an extension semantic: '),nl,
 	write('       1 - Conflict free'),nl,
-	write('       2 - Stable'),nl,
-	write('       3 - Admissible'),nl,
-	write('       4 - Complete'),nl,
-	write('       5 - Preferred'),nl,
-	write('       6 - Grounded'),nl,
+	% write('       2 - Stable'),nl,
+	write('       2 - Admissible'),nl,
+	write('       3 - Complete'),nl,
+	write('       4 - Preferred'),nl,
+	% write('       6 - Grounded'),nl,
 	write('       0 - Quit'),nl,nl,
-	utils:read_int_choice('Enter your choice', 0, 6, MenuChoice),
+	utils:read_int_choice('Enter your choice', 0, 4, MenuChoice),
 	!.
 
 extension_menu_process_choice(0) :- % Exit
@@ -95,7 +95,7 @@ extension_menu_process_choice(2) :-
     nb_setval(extension_desc, 'Stable '),
     rank_menu,
     nl.
-extension_menu_process_choice(3) :- 
+extension_menu_process_choice(2) :- 
     !,
     nl,
     get_admissible_sets_wrapper(AdmSets),
@@ -104,7 +104,7 @@ extension_menu_process_choice(3) :-
     rank_menu,
     nl.
 
-extension_menu_process_choice(4) :- 
+extension_menu_process_choice(3) :- 
     !,
     nl,
     get_complete_extensions_wrapper(CompleteExtensions),
@@ -113,7 +113,7 @@ extension_menu_process_choice(4) :-
     rank_menu,
     nl.
 
-extension_menu_process_choice(5) :- 
+extension_menu_process_choice(4) :- 
     !,
     nl,
     get_preferred_extensions_wrapper(PreferredExtensions),

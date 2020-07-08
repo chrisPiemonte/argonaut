@@ -1,9 +1,14 @@
+
+import nltk
+nltk.download('vader_lexicon')
+
 import click
 from crawler.argumentation.convert.common import *
 from crawler.argumentation.mine import from_stack
 from crawler.argumentation.mine import from_reddit
 from crawler.argumentation.mine import from_twitter
 from crawler.utils.exceptions.custom_exceptions import *
+
 
 REDDIT  = 'reddit'
 TWITTER = 'twitter'
