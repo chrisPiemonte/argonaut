@@ -7,7 +7,7 @@ jupyter==1.0.0
 jupyter_client==5.2.3
 jupyter_console==5.2.0
 jupyter_core==4.4.0
-jupyterlab==2.0.0
+jupyterlab==2.2.10
 jupyterlab_launcher==0.13.1
 matplotlib==2.2.3
 networkx==2.1
